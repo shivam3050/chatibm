@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "npm run start",
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "run": "node index.js"
   },
   "author": "",
   "license": "ISC",
