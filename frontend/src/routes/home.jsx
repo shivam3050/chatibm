@@ -59,6 +59,7 @@ export function Home() {
             receiver,
             "chatlistdemand"
         )
+        e.target.reset()
 
     };
 
