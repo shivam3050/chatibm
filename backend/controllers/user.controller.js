@@ -80,9 +80,9 @@ export const deleteUserAllChats = async (username) => {
 
 const activeClients = new Map()
 export const newConnectionHandler = (dbname) => {
-    const host = process.env.WS_HOST
-    const port = process.env.WS_PORT
-    const server = new WebSocketServer({ host: host, port: port });
+    const host = process.env.WS_HOST || "0.0.0.0"
+    const port = process.env.WS_PORT || 3000
+    const server = new WebSocketServer({ host : host, port: port });
     if(server){
         console.log(`ws is running on ${host} ${port}`)
     }
