@@ -2,7 +2,9 @@ export const UserSection = (props) => {
    
     
     if (!props.availableUsers || props.availableUsers.length === 0) {
-        return (<div style={{display:"flex",justifyContent:"center",alignItems:"center"}}>No users there</div>)
+        return (<div 
+            style={{display:"flex",justifyContent:"center",alignItems:"center"}}
+            >No users there</div>)
     }
     else {
         return <div className="users-container">

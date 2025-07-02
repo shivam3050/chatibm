@@ -28,26 +28,39 @@ export const newMessageSender = async (
             if (type === "message") {
                 // setAvailableChats((array)=>([...array,message]))
                 const chatDiv = document.getElementById("chats-div")
+                if(chatDiv.textContent==="No chats there"){
+                    chatDiv.textContent = ""
+                    chatDiv.style.justifyContent = "end"
+                }
 
-                chatDiv.insertAdjacentHTML(
-                    "beforeend"
-                    ,
-                    `
-                    <div style= "
-                        
-                            border: 0.5px solid black;
-                            align-self: self-end
-                        "
-                    >
-                        <div class="main-chat-text">
-                            ${message}
-                        </div>
-                        <div class="chatTextStatus newly-unupdated-chats">
-                            . ${createdAt}
-                        </div>
-                    </div>
-                    `
-                )
+                const chat = document.createElement("div");
+                
+                const mainChatText = document.createElement("div")
+
+                mainChatText.textContent = message
+
+                chat.appendChild(mainChatText)
+
+                const chatTextStatus = document.createElement("div")
+
+
+
+                const loading = document.createElement("div");
+                loading.classList.add("loading-spinner");
+
+
+                chatTextStatus.appendChild(loading)
+
+
+
+                // chatTextStatus.textContent = `${createdAt}`
+
+                chat.appendChild(chatTextStatus)
+                chat.classList.add("newly-unupdated-chats")
+                chat.style.alignSelf = "flex-end"
+
+                chatDiv.appendChild(chat)
+
                 chatDiv.scrollTo(
                     {
                         top: chatDiv.scrollHeight,

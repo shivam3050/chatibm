@@ -89,6 +89,7 @@ export const newConnectionHandler = (dbname) => {
     server.on("connection", async (socket, request) => {
         console.log("connected")
 
+
         const { query } = parse(request.url, true)
         const username = query.username
 
@@ -161,6 +162,7 @@ export const newConnectionHandler = (dbname) => {
 
                 const userObject = activeClients.get(receiver)
                 if(!userObject){
+
                     return socket.send(JSON.stringify(
                         {
                             status: "failed",
