@@ -16,7 +16,7 @@ connectDB().then((dbname) => {
         res.end('Simple HTTP 1.1 Server is running\n');
     });
 
-    const port = process.env.PORT_HTTP
+    const port = process.env.PORT
     server.listen(port, () => {
         console.log(`Server listening on ${port}`);
     });

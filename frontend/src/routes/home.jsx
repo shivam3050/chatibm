@@ -11,16 +11,19 @@ import Loading from "../utilitiesCompo/loading";
 export function Home() {
 
     useEffect(() => {
-  const setVh = () => {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-  };
 
-  setVh(); // initial run
-  window.addEventListener('resize', setVh);
 
-  return () => window.removeEventListener('resize', setVh);
-}, []);
+        
+        const setVh = () => {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+
+        setVh(); // initial run
+        window.addEventListener('resize', setVh);
+
+        return () => window.removeEventListener('resize', setVh);
+    }, []);
 
 
 
@@ -97,7 +100,7 @@ export function Home() {
         const textarea = e.target.querySelector('[name="message"]')
         textarea.value = ""
         textarea.focus()
-       
+
     }
 
 
@@ -132,10 +135,10 @@ export function Home() {
 
                 <p>
                     <button onClick={
-                        () => { setSelectedReciever("");setUser_vs_chat_flag(true); setAvailableChats([]) }}>
+                        () => { setSelectedReciever(""); setUser_vs_chat_flag(true); setAvailableChats([]) }}>
                         ←</button>
 
-                        <div>{selectedReciever}</div>
+                    <div>{selectedReciever}</div>
                     <button onClick={
                         () => { newQueriesSender(socketContainer.current, user, "query-message", "refresh-all-user") }}>
                         ↻</button>
@@ -184,7 +187,8 @@ export function Home() {
                     <form autoComplete="off" action="" className="inputs" onSubmit={async (e) => {
                         e.preventDefault();
 
-                        await handleManualLogin(e)                    }}>
+                        await handleManualLogin(e)
+                    }}>
                         <input required type="text" name="username" placeholder="Enter username" />
                         <input required type="number" name="age" placeholder="Enter age" />
 
@@ -197,16 +201,16 @@ export function Home() {
 
 
 
-                        <label 
-                        style={{
-                             display: "flex", alignItems: "center", justifyContent: "center", gap: "var(--max-margin)",
-                             transition: showLoading ? "none" : "opacity 8s ease",
-                             opacity: showLoading ? 1 : 0,
-                              }}
-                               className={`${showLoading ? ("visible") : ("fade-out")}`} name="loading" >
+                        <label
+                            style={{
+                                display: "flex", alignItems: "center", justifyContent: "center", gap: "var(--max-margin)",
+                                transition: showLoading ? "none" : "opacity 8s ease",
+                                opacity: showLoading ? 1 : 0,
+                            }}
+                            className={`${showLoading ? ("visible") : ("fade-out")}`} name="loading" >
 
                             <div style={{ display: showLoading ? "flex" : "none", alignItems: "center" }}>
-                                <Loading size="30px"  />
+                                <Loading size="30px" />
                             </div>
                             <div ref={signInErrLog}>
 
