@@ -15,8 +15,8 @@ connectDB().then((dbname) => {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.end('Simple HTTP 1.1 Server is running\n');
     });
-    server.listen(8000, () => {
-        console.log("Server listening on 0.0.0.0:8000");
+    server.listen(process.env.PORT_HTTP, () => {
+        console.log(`Server listening on ${process.env.PORT_HTTP}`);
     });
     newConnectionHandler(dbname, server, allowedOrigin)
 })
