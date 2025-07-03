@@ -3,13 +3,13 @@ import { Message } from "../db/message.model.js"
 import { WebSocketServer } from 'ws';
 import { parse } from "url"
 
-export const createNewOneChat = async (sender, receiver, message,createdAt) => {
+export const createNewOneChat = async (sender, receiver, message, createdAt) => {
     try {
         const user = await Message.create({
             sender: sender,
             receiver: receiver,
             content: message,
-            createdAt:createdAt
+            createdAt: createdAt
         })
         return user
     } catch {
@@ -80,10 +80,26 @@ export const deleteUserAllChats = async (username) => {
 
 const activeClients = new Map()
 export const newConnectionHandler = (dbname) => {
-    const host = process.env.WS_HOST 
-    const port = process.env.WS_PORT 
-    const server = new WebSocketServer({ host : host, port: port });
-    if(server){
+    const host = process.env.WS_HOST
+    const port = process.env.WS_PORT
+    const server = new WebSocketServer(
+        {
+            host: host,
+            port: port,
+            verifyClient: (info, done) => {
+                const origin = info.origin;
+
+                if (origin === process.env.FRONTEND_URL) { // http or https prot
+                    console.log(origin)
+                    done(true); 
+                } else {
+                    console.log('Connection rejected from origin:', origin);
+                    done(false, 403, 'Forbidden');
+                }
+            }
+        }
+    );
+    if (server) {
         console.log(`ws is running on ${host} ${port}`)
     }
     server.on("connection", async (socket, request) => {
@@ -100,13 +116,13 @@ export const newConnectionHandler = (dbname) => {
             return
         }
         const user = activeClients.has(username)
-      
+
         if (user) {
             socket.close(1008, "a user already exists")
             return
         }
-     
-        const availableUsers = [...activeClients.entries()].map(([username,data],_,__)=>({username,age:data.age}))
+
+        const availableUsers = [...activeClients.entries()].map(([username, data], _, __) => ({ username, age: data.age }))
         activeClients.set(username, {
             currentSocket: socket,
             age: age
@@ -117,9 +133,9 @@ export const newConnectionHandler = (dbname) => {
                 username: username,
                 type: "register",
                 age: age,
-               
+
                 availableUsers: availableUsers
-               
+
             }
         ))
 
@@ -134,17 +150,17 @@ export const newConnectionHandler = (dbname) => {
             const sender = data?.sender
             const receiver = data?.receiver
             const type = data?.type
-           
+
 
 
             if (!type) {
                 return console.error("type is not availbale")
             }
             if (type === "chatlistdemand") {
-                if(!sender || !receiver){
+                if (!sender || !receiver) {
                     return console.error("sender or recievr not provided")
                 }
-            
+
                 socket.send(
                     JSON.stringify({
                         status: "success",
@@ -161,20 +177,20 @@ export const newConnectionHandler = (dbname) => {
                 const createdAt = data.createdAt
 
                 const userObject = activeClients.get(receiver)
-                if(!userObject){
+                if (!userObject) {
 
                     return socket.send(JSON.stringify(
                         {
                             status: "failed",
                             sender: sender,
-                            receiver:receiver,
+                            receiver: receiver,
                             type: "message",
-                            createdAt:createdAt,
+                            createdAt: createdAt,
                             msg: "no receiver available"
                         }
                     ))
                 }
-                const {currentSocket} = userObject
+                const { currentSocket } = userObject
                 if (!currentSocket || currentSocket.readyState !== 1) {
 
 
@@ -182,66 +198,66 @@ export const newConnectionHandler = (dbname) => {
                         {
                             status: "failed",
                             sender: sender,
-                            receiver:receiver,
+                            receiver: receiver,
                             type: "message",
-                            createdAt:createdAt,
+                            createdAt: createdAt,
                             msg: "no receiver available"
                         }
                     ))
                 }
-               
 
-                    
-                    const result = await createNewOneChat(sender, receiver, data.message,createdAt)
-                    if (!result) {
-                        return socket.send(
-                            JSON.stringify({
-                                status: "failed",
-                                sender: sender,
-                                receiver:receiver,
-                                type: "message",
-                                createdAt:createdAt,
-                                msg: data.message
-                            })
-                        )
-                    } 
-         
 
-             
-                    currentSocket.send(
+
+                const result = await createNewOneChat(sender, receiver, data.message, createdAt)
+                if (!result) {
+                    return socket.send(
                         JSON.stringify({
-                            status: "success",
+                            status: "failed",
                             sender: sender,
-                            receiver:receiver,
+                            receiver: receiver,
                             type: "message",
-                            createdAt:createdAt,
+                            createdAt: createdAt,
                             msg: data.message
                         })
                     )
-                    socket.send(
-                        JSON.stringify({
-                            status: "success",
-                            sender: sender,
-                            receiver:receiver,
-                            createdAt:createdAt,
-                            type: "message",
-                        })
-                    )
+                }
 
-                    return
-                
-                
+
+
+                currentSocket.send(
+                    JSON.stringify({
+                        status: "success",
+                        sender: sender,
+                        receiver: receiver,
+                        type: "message",
+                        createdAt: createdAt,
+                        msg: data.message
+                    })
+                )
+                socket.send(
+                    JSON.stringify({
+                        status: "success",
+                        sender: sender,
+                        receiver: receiver,
+                        createdAt: createdAt,
+                        type: "message",
+                    })
+                )
+
+                return
+
+
             }
 
             else if (type === "query-message") {
                 socket.send(
                     JSON.stringify({
                         status: "success",
-                        sender:sender,
-                        receiver:receiver,
+                        sender: sender,
+                        receiver: receiver,
                         type: "query-message",
-                        query:"refresh-all-user",
-                        msg: [...activeClients.entries()].map(([username,itsValue],_,__) => ({username,age: itsValue.age})).filter((item,_,__)=>(item.username!==sender))
+                        query: "refresh-all-user",
+                        msg: [...activeClients.entries()].map(([username, itsValue], _, __) => ({ username, age: itsValue.age })).filter((item, _, __) => (item.username !== sender))
                         // msg: await searchAllUsers()
                     })
                 )
