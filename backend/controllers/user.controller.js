@@ -80,8 +80,8 @@ export const deleteUserAllChats = async (username) => {
 
 const activeClients = new Map()
 export const newConnectionHandler = (dbname,httpServer,allowedOrigin) => {
-    const host = process.env.WS_HOST
-    const port = process.env.WS_PORT
+    const host = process.env.HOST
+    const port = process.env.PORT
     const server = new WebSocketServer(
         {
             server: httpServer,
