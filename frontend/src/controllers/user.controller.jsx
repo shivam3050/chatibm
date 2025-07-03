@@ -13,33 +13,35 @@ export const newConnectionHandlerAndComingMessages = async (
 
 ) => {
 
-
-    socketContainer.current.onopen = () => {
-
-
+    if (!socketContainer.current) {
+        console.error("WebSocket is not present");
+        return;
+    } else {
+        console.log("websocket is present")
     }
 
 
-    socketContainer.current.onmessage = (e) => {
 
+    socketContainer.current.onopen = () => {
+
+    }
+
+    socketContainer.current.onmessage = (e) => {
 
         try {
             const data = JSON.parse(e.data)
-
 
             if (data.type === "register") {
 
                 // signInErrLog.current.style.visibility = "hidden"
                 clearInterval(timerIntervalId)
                 clearTimeout(timerTimeoutId)
+
                 setShowLoading(false)
 
 
-
                 setAvailableUsers(data.availableUsers)
-
                 setUser(data.username)
-
 
 
             }
@@ -77,7 +79,13 @@ export const newConnectionHandlerAndComingMessages = async (
                 }
 
                 else if (data.sender === selectedRecieverRef.current) {
+
                     const chatsDiv = document.getElementById("chats-div")
+                    if (chatsDiv.children[0].textContent === "No chats there") {
+                        chatsDiv.textContent = ""
+                        // chatsDiv.style.justifyContent = "start"
+                    }
+
                     const child = document.createElement("div")
                     child.style.border = "0.5px solid black";
                     child.style.alignSelf = "flex-start";
@@ -110,12 +118,12 @@ export const newConnectionHandlerAndComingMessages = async (
                     // if (data.msg.length && usersDiv){
 
                     // }
-                 
+
                     // if (usersDiv.textContent === "No users there") {
                     //     usersDiv.textContent = ""
                     //     usersDiv.style.justifyContent = "start"
                     // }
-                        setAvailableUsers(data.msg)
+                    setAvailableUsers(data.msg)
 
                 }
                 return

@@ -30,7 +30,7 @@ export const newMessageSender = async (
                 const chatDiv = document.getElementById("chats-div")
                 if(chatDiv.children[0].textContent==="No chats there"){
                     chatDiv.textContent = ""
-                    chatDiv.style.justifyContent = "end"
+                    // chatDiv.style.justifyContent = "end"
                 }
 
                 const chat = document.createElement("div");

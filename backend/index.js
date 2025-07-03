@@ -9,7 +9,7 @@ import { connectDB } from './db/db.handler.js';
 
 
 connectDB().then((dbname) => {
-    const allowedOrigin = process.env.WHITELISTED_FRONTEND_URL;
+    const allowedOrigin = [process.env.WHITELISTED_FRONTEND_URL_1,process.env.WHITELISTED_FRONTEND_URL_2,process.env.WHITELISTED_FRONTEND_URL_3,process.env.WHITELISTED_FRONTEND_URL_4];
 
     const server = http.createServer((req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/plain' });

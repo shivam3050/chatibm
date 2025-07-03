@@ -79,20 +79,31 @@ export const deleteUserAllChats = async (username) => {
 
 
 const activeClients = new Map()
-export const newConnectionHandler = (dbname,httpServer,allowedOrigin) => {
+export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
     const server = new WebSocketServer(
         {
             server: httpServer,
             verifyClient: (info, done) => {
                 const origin = info.origin;
+                let allowed = false
+                for (let i = 0; i < allowedOrigin.length; i++) {
+                    if (!(origin === allowedOrigin[i])) {
+                        continue;
+                    } else {
+                        console.log(origin)
+                        done(true);
+                        allowed = true
+                        break
+                    }
 
-                if (origin === allowedOrigin) { // http or https prot
-                    console.log(origin)
-                    done(true); 
-                } else {
+
+                }
+                if (!allowed){
                     console.log('Connection rejected from origin:', origin);
                     done(false, 403, 'Forbidden');
                 }
+
+               
             }
         }
     );

@@ -15,12 +15,15 @@
     --light-grey: #424242;
     --extra-light-grey: #636363;
 
+    --professional-blue: rgb(0, 100, 255);
+
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
     --nav-height: 50px;
+    --toggle-select-width: 25svw;
     --border-color: #565656;
     --border-size: 0.5px;
 
@@ -83,6 +86,7 @@ textarea {
 
 input[type="submit"],
 input[type="button"],
+.button,
 button {
     background-color: var(--extra-light-grey);
     padding: var(--max-padding);
@@ -100,6 +104,9 @@ input[type="number"]:focus,
 input[type="password"]:focus {
     outline: none;
 }
+
+
+
 
 .loading-spinner {
 
@@ -178,6 +185,7 @@ input[type="password"]:focus {
     height: calc(var(--nav-height));
     background-color: var(--light-grey);
     padding-inline: calc(3*var(--min-padding));
+    padding-block: var(--med-padding);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -186,8 +194,66 @@ input[type="password"]:focus {
 }
 
 .dashboard> :nth-child(1)>* {
-    /* width: 15%; */
+    /* this is the three elements in header */
+    height: 100%;
+    width: 10%;
+    min-width: 50px;
+    max-width: 100px;
+    padding: var(--max-padding);
+    outline: none;
+    border: none;
+    
 
+}
+
+.dashboard> :nth-child(1)> :nth-child(1) {
+    
+    background-color: red;
+    visibility: hidden;
+    
+    
+}
+.dashboard> :nth-child(1)> :nth-child(3) {
+    /* this is select like tag which stores aside */
+    background-color: transparent;
+    padding: var(--max-padding);
+    position: relative;
+    height: 100%;
+    width: 20%;
+    display: flex;
+   justify-content: center;
+   align-items: center;
+   cursor: pointer;
+
+    
+    
+}
+
+.dashboard> :nth-child(1)> :nth-child(3) > :nth-child(1){
+    /* this is three dots div */
+   display: flex;
+   justify-content: center;
+   align-items: center;
+  
+}
+.dashboard> :nth-child(1)> :nth-child(3) > :nth-child(2) {
+    /* this is aside tag */
+    width:var(--toggle-select-width);
+    background-color: var(--dark-grey);
+    position: absolute;
+    
+    min-height: 80px;
+  
+    top:calc(var(--nav-height)/5);
+    transition: right 0.4s ease, left 0.4s ease;
+    /* border: 2px solid green; */
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+}
+.dashboard> :nth-child(1)> :nth-child(3) > :nth-child(2)>*{
+    /* this are options inside aside */
+    background-color: transparent;
 }
 
 .dashboard> :nth-child(1)> :nth-child(2) {
@@ -200,6 +266,13 @@ input[type="password"]:focus {
 .dashboard> :nth-child(2) {
     height: calc(100% - var(--nav-height));
     background-color: var(--light-grey);
+}
+
+.dashboard .dashboard-overlay {
+    opacity: 0;
+    position: absolute;
+    height: 100svh;
+    width: 100svh;
 }
 
 .users-container {
@@ -247,6 +320,7 @@ input[type="password"]:focus {
     background-color: var(--light-black);
     border-top: 1px inset var(--border-color);
     border-bottom: 1px inset var(--dark-black);
+    background: linear-gradient(to top, var(--light-black) 50%,transparent);
 
 }
 
@@ -263,6 +337,7 @@ input[type="password"]:focus {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    border: 1px solid var(--dark-grey);
 
 
 }

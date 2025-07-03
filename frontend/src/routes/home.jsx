@@ -13,7 +13,7 @@ export function Home() {
     useEffect(() => {
 
 
-        
+
         const setVh = () => {
             const vh = window.innerHeight * 0.01;
             document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -38,7 +38,9 @@ export function Home() {
     const [availableUsers, setAvailableUsers] = useState([])
     const [availableChats, setAvailableChats] = useState([])
     const [selectedReciever, setSelectedReciever] = useState("")
+
     const selectedRecieverRef = useRef("");
+    const [toggleSelect, setToggleSelect] = useState(false)
 
     const [user_vs_chat_flag, setUser_vs_chat_flag] = useState(true)
 
@@ -54,10 +56,13 @@ export function Home() {
         const age = formData.get("age")
 
 
+        try {
+            socketContainer.current = new WebSocket(`${import.meta.env.VITE_BACKEND_WS_URL}/?username=${username}&age=${age}`)
+        } catch (error) {
 
-        socketContainer.current = new WebSocket(`${import.meta.env.VITE_BACKEND_WS_URL}/?username=${username}&age=${age}`)
-
+        }
         if (!socketContainer.current) {
+            alert("5")
             return
         }
         signInErrLog.current.textContent = ""
@@ -66,12 +71,10 @@ export function Home() {
             signInErrLog.current.textContent = i
             i--
         }, 1000)
-
         const timerTimeoutId = setTimeout(() => {
             clearInterval(timerIntervalId)
             signInErrLog.current.textContent = ""
         }, 50000)
-
         signInErrLog.current.style.color = "white"
         signInErrLog.current.style.fontWeight = "100"
         setShowLoading(true)
@@ -118,6 +121,28 @@ export function Home() {
     };
 
 
+    const toggleSelectCallback =
+        (e) => {
+            e.stopPropagation()
+            setToggleSelect(true)
+
+        }
+
+    const controlUserCallback = (e) => {
+        e.stopPropagation();
+
+        if (e.target.value === "refresh") {
+
+            newQueriesSender(socketContainer.current, user, "query-message", "refresh-all-user")
+        }
+        setToggleSelect(false)
+        if(e.target.value==="logout"){
+            socketContainer.current.close()
+            setUser(null)
+        }
+    }
+
+
     useEffect(() => {
         selectedRecieverRef.current = selectedReciever
     }, [selectedReciever])
@@ -131,19 +156,44 @@ export function Home() {
     return (
 
         user ? (
-            <div className="home dashboard">
-
-                <p>
-                    <button onClick={
-                        () => { setSelectedReciever(""); setUser_vs_chat_flag(true); setAvailableChats([]) }}>
+            <div className="home dashboard" >
+         
+                <header >
+                    <button
+                        style={{ visibility: selectedReciever ? "visible" : "hidden" }} onClick={
+                            () => { setSelectedReciever(""); setUser_vs_chat_flag(true); setAvailableChats([]) }}>
                         ←</button>
 
                     <div>{selectedReciever}</div>
-                    <button onClick={
-                        () => { newQueriesSender(socketContainer.current, user, "query-message", "refresh-all-user") }}>
-                        ↻</button>
 
-                </p>
+                    <section 
+             
+                    onClick={(e) => { toggleSelectCallback(e) }} id="controls"
+                        className="button"
+style={{ visibility: selectedReciever ? "hidden" : "visible" }}
+
+                    >
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="white" class="bi bi-list" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+                            </svg>
+                        </div>
+
+
+                        <aside style={{
+                            right: toggleSelect ? "0" : "calc(-3*var(--min-padding) - var(--toggle-select-width) - 10px)",
+
+                        }}>
+                            <button onClick={(e) => { controlUserCallback(e) }} className="option" value="refresh">Refresh</button>
+                            <button onClick={(e) => { controlUserCallback(e) }} className="option" value="close">Close</button>
+                            <button onClick={(e) => { controlUserCallback(e) }} className="option" value="logout" style={{color:"red"}}>Logout</button>
+                        </aside>
+
+
+                    </section>
+
+                </header>
+
                 {user_vs_chat_flag ? (
                     <aside className="">
                         <UserSection
@@ -169,6 +219,19 @@ export function Home() {
 
                 )}
 
+                <div style={
+                    {
+                    
+                        display:toggleSelect?"block":"none"
+                    }
+                } className="dashboard-overlay"
+                onClick={(e)=>{
+                e.stopPropagation()
+                setToggleSelect(false)
+            }}
+                >
+
+                </div>
 
             </div>
 
