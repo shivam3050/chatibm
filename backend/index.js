@@ -15,8 +15,10 @@ connectDB().then((dbname) => {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.end('Simple HTTP 1.1 Server is running\n');
     });
-    server.listen(process.env.PORT_HTTP, () => {
-        console.log(`Server listening on ${process.env.PORT_HTTP}`);
+
+    const port = process.env.PORT_HTTP
+    server.listen(port, () => {
+        console.log(`Server listening on ${port}`);
     });
     newConnectionHandler(dbname, server, allowedOrigin)
 })
