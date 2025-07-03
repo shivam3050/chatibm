@@ -79,17 +79,16 @@ export const deleteUserAllChats = async (username) => {
 
 
 const activeClients = new Map()
-export const newConnectionHandler = (dbname) => {
+export const newConnectionHandler = (dbname,httpServer,allowedOrigin) => {
     const host = process.env.WS_HOST
     const port = process.env.WS_PORT
     const server = new WebSocketServer(
         {
-            host: host,
-            port: port,
+            server: httpServer,
             verifyClient: (info, done) => {
                 const origin = info.origin;
 
-                if (origin === process.env.FRONTEND_URL) { // http or https prot
+                if (origin === allowedOrigin) { // http or https prot
                     console.log(origin)
                     done(true); 
                 } else {
