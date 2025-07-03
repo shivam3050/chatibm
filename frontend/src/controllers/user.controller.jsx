@@ -61,10 +61,10 @@ export const newConnectionHandlerAndComingMessages = async (
                         }
                         return
                     } else if (data.status === "success") {
-                        console.log("updating to sucess wait")
+                       
                         const chatsDiv = document.getElementById("chats-div")
                         const unUpdatedChats = chatsDiv.querySelectorAll(".newly-unupdated-chats")
-                        console.log(unUpdatedChats)
+                
 
                         for (let i = 0; i < unUpdatedChats.length; i++) {
                             unUpdatedChats[i].children[1].textContent = `✔ ${data.createdAt}`;

@@ -12,8 +12,13 @@ connectDB().then((dbname) => {
     const allowedOrigin = [process.env.WHITELISTED_FRONTEND_URL];
 
     const server = http.createServer((req, res) => {
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        console.log(req.headers.host)
+        res.writeHead(200, { 'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin':"*",
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+         });
         res.end('Simple HTTP 1.1 Server is running\n');
+        return
     });
 
     const port = process.env.PORT

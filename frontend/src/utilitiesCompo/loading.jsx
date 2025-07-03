@@ -2,7 +2,7 @@
 
 function Loading(props) {
 
-console.log(props)
+
     return (
       <div style={{
         
