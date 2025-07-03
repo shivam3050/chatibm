@@ -17,6 +17,8 @@
 
     --professional-blue: rgb(0, 100, 255);
 
+    --extra-height-in-android-chrome: 10vh;
+
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -37,6 +39,7 @@
 
     --min-border-radius: 1px;
     --med-border-radius: 2px;
+    --large-border-radius: 15px;
 
     --mini-line-height: 14px;
     --min-line-height: 16px;
@@ -88,7 +91,7 @@ input[type="submit"],
 input[type="button"],
 .button,
 button {
-    background-color: var(--extra-light-grey);
+    background-color: var(--professional-blue);
     padding: var(--max-padding);
     /* margin: var(--max-margin); */
     color: var(--light-color);
@@ -96,7 +99,16 @@ button {
     border: none;
     border-radius: var(--med-border-radius);
     outline: none;
+    box-shadow: none; 
     cursor: pointer;
+}
+input[type="submit"]:focus,
+input[type="button"]:focus,
+.button:focus,
+button:focus {
+    outline: none;
+    box-shadow: none; 
+   
 }
 
 input[type="text"]:focus,
@@ -143,8 +155,12 @@ input[type="password"]:focus {
 }
 
 .app {
-    height: calc(var(--vh) * 100);
-    /* height: 100svh; */
+    /* height: calc(var(--vh) * 100); */
+    height: calc(100vh);
+    /*fallback to 100 vh if browser is older*/
+    height: 100dvh;
+    width: 100vw;
+    /*fallback to 100 vh if browser is older*/
     width: 100svw;
     background-color: var(--light-black);
     box-sizing: border-box;
@@ -152,6 +168,7 @@ input[type="password"]:focus {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow: hidden;
 
 }
 
@@ -189,7 +206,9 @@ input[type="password"]:focus {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* min-width: 100%; */
+    position: sticky;
+    top: 0;
+
 
 }
 
@@ -202,17 +221,18 @@ input[type="password"]:focus {
     padding: var(--max-padding);
     outline: none;
     border: none;
-    
+
 
 }
 
 .dashboard> :nth-child(1)> :nth-child(1) {
-    
+
     background-color: red;
     visibility: hidden;
-    
-    
+
+
 }
+
 .dashboard> :nth-child(1)> :nth-child(3) {
     /* this is select like tag which stores aside */
     background-color: transparent;
@@ -221,39 +241,46 @@ input[type="password"]:focus {
     height: 100%;
     width: 20%;
     display: flex;
-   justify-content: center;
-   align-items: center;
-   cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 
-    
-    
+
+
 }
 
-.dashboard> :nth-child(1)> :nth-child(3) > :nth-child(1){
+.dashboard> :nth-child(1)> :nth-child(3)> :nth-child(1) {
     /* this is three dots div */
-   display: flex;
-   justify-content: center;
-   align-items: center;
-  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 }
-.dashboard> :nth-child(1)> :nth-child(3) > :nth-child(2) {
+
+.dashboard> :nth-child(1)> :nth-child(3)> :nth-child(2) {
     /* this is aside tag */
-    width:var(--toggle-select-width);
+    width: var(--toggle-select-width);
     background-color: var(--dark-grey);
     position: absolute;
     box-shadow: 1px 1px 10px 1px var(--light-black);
     min-height: 80px;
-    top:calc(var(--nav-height)/5);
+    top: calc(var(--nav-height)/5);
     transition: right 0.4s ease, left 0.4s ease;
-    /* border: 2px solid green; */
+    
     display: flex;
     flex-direction: column;
     z-index: 1;
+    right: -100vw;
+    
 
 }
-.dashboard> :nth-child(1)> :nth-child(3) > :nth-child(2)>*{
+
+.dashboard> :nth-child(1)> :nth-child(3)> :nth-child(2)>* {
     /* this are options inside aside */
     background-color: transparent;
+    height: var(--nav-height);
+    width: 30vw;
+    align-self: center;
 }
 
 .dashboard> :nth-child(1)> :nth-child(2) {
@@ -265,7 +292,7 @@ input[type="password"]:focus {
 
 .dashboard> :nth-child(2) {
     height: calc(100% - var(--nav-height));
-    background-color: var(--light-grey);
+    /* background-color: var(--light-grey); */
 }
 
 .dashboard .dashboard-overlay {
@@ -305,24 +332,42 @@ input[type="password"]:focus {
 
 
 .user-vs-chat-container {
-    height: var(--nav-height);
+    height: calc(100% - var(--nav-height));
+    background: linear-gradient(to top, var(--light-black), var(--light-grey));
+    
+
 
 }
 
 .user-vs-chat-container> :nth-child(1) {
-    /* max-height: calc(100% - var(--nav-height)); */
-    max-height: calc(100% - var(--nav-height));
-    height: calc(100% - var(--nav-height));
+    /* height: calc(100vh - 2*var(--nav-height) - var(--extra-height-in-android-chrome) );  */
+    /* height: calc(100svh - 2*var(--nav-height) ); */
+    height: calc(100% - 2*var(--nav-height));
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
+    flex: 1;
+    flex-shrink: 0;
     padding: var(--max-padding);
-    background-color: var(--light-black);
+    background-color: transparent;
     border-top: 1px inset var(--border-color);
-    border-bottom: 1px inset var(--dark-black);
-    background: linear-gradient(to top, var(--light-black) 50%,transparent);
 
 }
+
+.user-vs-chat-container> :nth-child(2) {
+    /* this is bottom tab */
+    height: calc(1*var(--nav-height));
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    position: relative;
+    /* bottom: 0; */
+    background-color: transparent;
+    
+    
+    
+}
+
 
 .user-vs-chat-container> :nth-child(1)>* {
 
@@ -337,7 +382,8 @@ input[type="password"]:focus {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border: 1px solid var(--dark-grey);
+    border-radius: var(--med-border-radius);
+    border: 1px solid var(--light-black);
 
 
 }
@@ -352,31 +398,55 @@ input[type="password"]:focus {
 .user-vs-chat-container> :nth-child(1)>*> :nth-child(2) {
     /* this is pointing to chats sub details */
     font-size: var(--mini-font-size);
+    
 }
 
 
-.user-vs-chat-container> :nth-child(2) {
-    /* this is bottom tab */
-    height: calc(var(--nav-height));
+
+
+.user-vs-chat-container> :nth-child(2)> :nth-child(1)  {
+    height: 100%;
+    width:80%;
+    padding-inline: var(--max-padding);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1%;
-    border-bottom: 1px inset var(--dark-black);
-}
-
-.user-vs-chat-container> :nth-child(2)> :nth-child(1) {
-    /* this is input msg send textbox */
-    width: 80%;
-    height: 88%;
-
+    justify-content: end;
+    align-items: start;
 }
 
 .user-vs-chat-container> :nth-child(2)> :nth-child(2) {
+    height: 100%;
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+
+}
+
+.user-vs-chat-container> :nth-child(2)> :nth-child(1) > * {
+    /* this is input msg send textbox */
+    min-width: 180px;
+    width: 100%;
+    height: var(--nav-height);
+    border: var(--border-size) solid var(--border-color);
+    border-radius: calc(2*var(--large-border-radius));
+   
+    
+
+}
+
+.user-vs-chat-container> :nth-child(2)> :nth-child(2) >* {
     /* this is input msg send button */
-    width: 17%;
+    width: 50px;
     /* background-color: red; */
-    height: 88%;
+    height: 50px;
+    /* border-top-right-radius: var(--large-border-radius); */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: var(--max-padding);
+
 
 }
 
