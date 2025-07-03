@@ -28,7 +28,7 @@ export const newMessageSender = async (
             if (type === "message") {
                 // setAvailableChats((array)=>([...array,message]))
                 const chatDiv = document.getElementById("chats-div")
-                if(chatDiv.textContent==="No chats there"){
+                if(chatDiv.children[0].textContent==="No chats there"){
                     chatDiv.textContent = ""
                     chatDiv.style.justifyContent = "end"
                 }

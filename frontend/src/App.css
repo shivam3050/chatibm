@@ -103,25 +103,26 @@ input[type="password"]:focus {
 
 .loading-spinner {
 
-    width:10px;
-    height:10px;
-    border:2px solid var(--light-grey);
-    border-top:2px solid white;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-    display:inline-block;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--light-grey);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
 }
+
 .resizable-loading-spinner {
 
     border-style: solid;
     border-color: var(--light-grey);
-    
-    border-top-style: solid ;
-    border-top-color: white ;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-    display:inline-block;
- 
+
+    border-top-style: solid;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+
 }
 
 @keyframes spin {
@@ -144,7 +145,7 @@ input[type="password"]:focus {
     display: flex;
     flex-direction: column;
     justify-content: center;
-  
+
 }
 
 .app>* {
@@ -183,11 +184,13 @@ input[type="password"]:focus {
     /* min-width: 100%; */
 
 }
-.dashboard> :nth-child(1) > * {
+
+.dashboard> :nth-child(1)>* {
     /* width: 15%; */
-    
+
 }
-.dashboard> :nth-child(1) > :nth-child(2){
+
+.dashboard> :nth-child(1)> :nth-child(2) {
     text-align: start;
     padding: var(--max-padding);
     flex: 1;
@@ -359,46 +362,64 @@ input[type="password"]:focus {
     transition: opacity 4s ease-out;
     opacity: 1;
     outline: none;
-    
-    
+
+}
+
+.any-label {
+    color: red;
+    /* font-size: var(--min-font-size); */
+    font-family: monospace;
+    background-color: var(--dark-grey);
+    padding: var(--max-padding);
+    border: 1px solid var(--border-color);
+    border-radius: calc(10*var(--med-border-radius));
+    transition: opacity 4s ease-out;
+    opacity: 1;
+    outline: none;
 }
 
 .fade-out {
     opacity: 0
 }
-.invisible{
+
+.invisible {
     visibility: hidden;
 }
-.visible{
+
+.visible {
     visibility: visible;
 }
-.no-display{
+
+.no-display {
     display: none;
 }
-.display{
+
+.display {
     display: block;
 }
 
 
-@media (max-height:450px) and (min-width:440px ) {
-    .signin-box{
+@media (max-height:450px) and (min-width:440px) {
+    .signin-box {
         flex-direction: row;
         align-items: center;
         gap: 30px;
         width: 85%;
-        
+
     }
-    .signin-box > :nth-child(1){
+
+    .signin-box> :nth-child(1) {
         flex-direction: row;
         width: 20%;
     }
 }
 
 @media (max-height:450px) {
-    .signin-box{
+    .signin-box {
         height: max-content;
     }
-    .app{
+
+    .app {
         overflow-y: auto;
     }
 }

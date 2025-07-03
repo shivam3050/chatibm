@@ -33,6 +33,9 @@ export const newConnectionHandlerAndComingMessages = async (
                 clearInterval(timerIntervalId)
                 clearTimeout(timerTimeoutId)
                 setShowLoading(false)
+
+
+
                 setAvailableUsers(data.availableUsers)
 
                 setUser(data.username)
@@ -103,7 +106,16 @@ export const newConnectionHandlerAndComingMessages = async (
             }
             else if (data.type === "query-message") {
                 if (data.query === "refresh-all-user") {
-                    setAvailableUsers(data.msg)
+                    // const usersDiv = document.getElementById("users-div")
+                    // if (data.msg.length && usersDiv){
+
+                    // }
+                 
+                    // if (usersDiv.textContent === "No users there") {
+                    //     usersDiv.textContent = ""
+                    //     usersDiv.style.justifyContent = "start"
+                    // }
+                        setAvailableUsers(data.msg)
 
                 }
                 return
