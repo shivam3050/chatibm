@@ -241,15 +241,15 @@ input[type="password"]:focus {
     width:var(--toggle-select-width);
     background-color: var(--dark-grey);
     position: absolute;
-    
+    box-shadow: 1px 1px 10px 1px var(--light-black);
     min-height: 80px;
-  
     top:calc(var(--nav-height)/5);
     transition: right 0.4s ease, left 0.4s ease;
     /* border: 2px solid green; */
     display: flex;
     flex-direction: column;
     z-index: 1;
+
 }
 .dashboard> :nth-child(1)> :nth-child(3) > :nth-child(2)>*{
     /* this are options inside aside */
@@ -272,7 +272,7 @@ input[type="password"]:focus {
     opacity: 0;
     position: absolute;
     height: 100svh;
-    width: 100svh;
+    width: 100svw;
 }
 
 .users-container {
@@ -474,7 +474,7 @@ input[type="password"]:focus {
 }
 
 
-@media (max-height:450px) and (min-width:440px) {
+@media (max-height:450px) and (min-width:450px) {
     .signin-box {
         flex-direction: row;
         align-items: center;
@@ -489,7 +489,7 @@ input[type="password"]:focus {
     }
 }
 
-@media (max-height:450px) {
+@media (max-height:470px) {
     .signin-box {
         height: max-content;
     }
