@@ -158,28 +158,7 @@ export function Home() {
                             newMessageSendHandler(e)
                         }}>
                             <textarea required
-                                // onFocus={async(e)=>{
-                                //     e.preventDefault();
-                                //     await new Promise((resolve)=>{
-                                //             setTimeout(() => {
-                                //                 resolve()
-                                //             }, 1000);
-                                //         })
-                                //     e.target.placeholder = window.innerHeight
-                                //     }}
-                                //     onBlur={async(e)=>{
-                                //         e.preventDefault()
-                                //         await new Promise((resolve)=>{
-                                //             setTimeout(() => {
-                                //                 resolve()
-                                //             }, 1000);
-                                //         })
-                                //         e.target.placeholder = window.innerHeight
 
-                                //     }} 
-                                //     onInput={()=>{
-
-                                //     }} 
                                 style={{ resize: "none" }} placeholder={`send to ${selectedReciever}...`} name="message" maxLength="500"></textarea>
                             <input type="submit" value="➤" />
                         </form>
@@ -202,7 +181,7 @@ export function Home() {
                 </div>
                 <section className="signin-box">
                     <label >Choose Username</label>
-                    <form autocomplete="off" action="" className="inputs" onSubmit={async (e) => {
+                    <form autoComplete="off" action="" className="inputs" onSubmit={async (e) => {
                         e.preventDefault();
 
                         await handleManualLogin(e)                    }}>
