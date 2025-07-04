@@ -9,8 +9,13 @@ export const ChatSection = (props) => {
     }, [props.availableChats])
 
     if (!props.availableChats || props.availableChats.length === 0) {
-        return (<div id="chats-div" className="" style={{ display: "flex", flexDirection:"column", justifyContent: "start", alignItems: "center" }}>
-            <div className="any-label">
+        return (<div id="chats-div" className="" style={{ display: "flex", flexDirection:"column", justifyContent: "start", alignItems: "center"
+            
+         }}>
+            <div className="any-label" style={{
+                borderRadius: "calc(10*var(--med-border-radius))",
+                textAlign:"center"
+            }}>
                 No chats there
             </div>
         </div>)

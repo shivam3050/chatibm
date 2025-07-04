@@ -42,6 +42,9 @@ export const newConnectionHandlerAndComingMessages = async (
 
                 setAvailableUsers(data.availableUsers)
                 setUser(data.username)
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(err => alert(err));
+                }
 
 
             }
@@ -61,10 +64,10 @@ export const newConnectionHandlerAndComingMessages = async (
                         }
                         return
                     } else if (data.status === "success") {
-                       
+
                         const chatsDiv = document.getElementById("chats-div")
                         const unUpdatedChats = chatsDiv.querySelectorAll(".newly-unupdated-chats")
-                
+
 
                         for (let i = 0; i < unUpdatedChats.length; i++) {
                             unUpdatedChats[i].children[1].textContent = `✔ ${data.createdAt}`;
@@ -160,11 +163,14 @@ export const newConnectionHandlerAndComingMessages = async (
         signInErrLog.current.textContent = e.reason
         signInErrLog.current.style.color = "red"
         signInErrLog.current.style.fontWeight = "bold"
-
-
-
-
-
+    }
+    socketContainer.current.error = async (e) => {
+        clearInterval(timerIntervalId)
+        clearTimeout(timerTimeoutId)
+        setShowLoading(false)
+        signInErrLog.current.textContent = e.reason
+        signInErrLog.current.style.color = "red"
+        signInErrLog.current.style.fontWeight = "bold"
     }
 
 

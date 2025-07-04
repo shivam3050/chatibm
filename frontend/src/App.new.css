@@ -1,0 +1,13 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+
+.parent {
+  width: 1000px;
+  margin-top: 1000px; /* Enough vertical space for scrolling */
+}

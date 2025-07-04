@@ -10,20 +10,8 @@ import Loading from "../utilitiesCompo/loading";
 
 export function Home() {
 
-    // useEffect(() => {
 
 
-
-    //     const setVh = () => {
-    //         const vh = window.innerHeight * 0.01;
-    //         document.documentElement.style.setProperty('--vh', `${vh}px`);
-    //     };
-
-    //     setVh(); // initial run
-    //     window.addEventListener('resize', setVh);
-
-    //     return () => window.removeEventListener('resize', setVh);
-    // }, []);
 
 
 
@@ -62,7 +50,7 @@ export function Home() {
 
         }
         if (!socketContainer.current) {
-            alert("5")
+           
             return
         }
         signInErrLog.current.textContent = ""
@@ -130,15 +118,23 @@ export function Home() {
 
     const controlUserCallback = (e) => {
         e.stopPropagation();
+        
 
+        setToggleSelect(false)
         if (e.target.value === "refresh") {
 
             newQueriesSender(socketContainer.current, user, "query-message", "refresh-all-user")
+            return
         }
-        setToggleSelect(false)
         if (e.target.value === "logout") {
             socketContainer.current.close()
             setUser(null)
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(err => console.error(err));
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen().catch(err => console.error(err));
+            }
+            return
         }
     }
 
@@ -158,7 +154,16 @@ export function Home() {
         user ? (
             <div className="home dashboard" >
 
-                <header >
+                <header className=" header"
+                    style={
+                        {
+
+
+
+                            // zIndex: "10"
+                        }
+                    }
+                >
                     <button
                         style={{ visibility: selectedReciever ? "visible" : "hidden", backgroundColor: "transparent" }} onClick={
                             () => { setSelectedReciever(""); setUser_vs_chat_flag(true); setAvailableChats([]) }}>
@@ -173,7 +178,8 @@ export function Home() {
                         fontSize: "18px",
                         textDecoration: "underline"
                     }}
-                    ><i>{selectedReciever}</i></div>
+                    
+                    ><i className={selectedReciever?"selected-username-holder":""}>{selectedReciever}</i></div>
 
                     <section
 
@@ -190,7 +196,7 @@ export function Home() {
 
 
                         <aside style={{
-                            right: toggleSelect ? "0" : "-100vw",
+                            right: toggleSelect ? "calc(var(--max-padding))" : "-105vw",
 
 
                         }}>
@@ -199,19 +205,21 @@ export function Home() {
                                     <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
                                 </svg>
                             </button>
-                            <button onClick={(e) => { controlUserCallback(e) }} className="option" value="username"
+                            <button onClick={(e) => { controlUserCallback(e) }} className="option " value="username"
                                 style={{
                                     fontFamily: "cursive",
                                     color: "var(--professional-blue)",
                                     fontWeight: "bold",
                                     fontSize: "18px",
-                                    textDecoration: "underline"
-                                }}><i>{user}</i></button>
+                                    textDecoration: "underline",
+
+                                }}
+                                ><i className="selected-username-holder-noborder">{user}</i></button>
                             <button onClick={(e) => { controlUserCallback(e) }} className="option" value="refresh" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: '10px' }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
                                     <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9" />
                                     <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z" />
-                                </svg>Users
+                                </svg>Sync users
                             </button>
                             <button onClick={(e) => { controlUserCallback(e) }} className="option" value="logout" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: '10px', color: "red" }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left" viewBox="0 0 16 16">
@@ -226,24 +234,35 @@ export function Home() {
 
                 </header>
 
-                {user_vs_chat_flag ? (
+                {user_vs_chat_flag  ? 
+                (
                     <div>
                         <UserSection
 
                             availableUsers={availableUsers}
                             onUserClick={handleUserClickOnUserSection}
                         />
+                       
                     </div>
 
                 ) : (
-                    <aside className="user-vs-chat-container">
+                    <aside className="user-vs-chat-container" >
                         <ChatSection username={user} availableChats={availableChats} />
                         <form className="formCreateChat" action="" method="post" onSubmit={(e) => {
-                            e.preventDefault();
+                            // e.preventDefault();
                             newMessageSendHandler(e)
                         }}>
                             <div>
                                 <textarea required alignItems="center"
+
+                                    onFocus={(e) => {
+                                       
+                                        updateViewportVars()
+                                    }}
+                                    onBlur={(e)=>{
+                                        
+                                        updateViewportVars()
+                                    }}
 
                                     style={{ resize: "none" }} placeholder={`Send to ${selectedReciever}...`} name="message" maxLength="500">
 
@@ -257,27 +276,21 @@ export function Home() {
                                 </button>
                             </div>
                         </form>
+                      
+                        
+                        
+                      
                     </aside>
 
                 )}
 
-                {/* <div style={
-                    {
 
-                        left: toggleSelect ? "0" : "-100vw",
-                        position:"absolute",
-                        backgroundColor:"red",
-                        opacity:"1"
-                    }
-                } className="dashboard-overlay"
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        setToggleSelect(false)
-                    }}
-                >
+                <section className="dashboard-overlay" style={{display:toggleSelect?"block":"none"}}
+                onClick={()=>{
+                    setToggleSelect(false)
+                }}>
 
-                </div> */}
-
+                </section>
             </div>
 
 
@@ -285,11 +298,7 @@ export function Home() {
 
             <div className="home container-sign-in">
 
-                <div className="back-overlay">
-                    <div className="rotator">
 
-                    </div>
-                </div>
                 <section className="signin-box">
                     <label >Choose Username</label>
                     <form autoComplete="off" action="" className="inputs" onSubmit={async (e) => {

@@ -9,6 +9,20 @@
     color: rgba(255, 255, 255, 0.87);
     --light-color: white;
     background-color: #000000;
+    background-color: var(--light-black);
+
+
+
+
+  
+
+
+
+
+
+
+
+
     --dark-black: #000000;
     --light-black: #212121;
     --dark-grey: #303030;
@@ -53,7 +67,19 @@
     --med-font-size: 15px;
     --max-font-size: 18px;
 
+    --offset-for-keyboard: 20px
 }
+
+
+
+@supports (height: 100svh) {
+    :root {
+        --chat-height-adjust: 5vh;
+    }
+}
+
+
+
 
 * {
     margin: 0;
@@ -72,7 +98,8 @@
 
 div {
     cursor: default;
-    user-select: none;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 input[type="text"],
@@ -99,16 +126,17 @@ button {
     border: none;
     border-radius: var(--med-border-radius);
     outline: none;
-    box-shadow: none; 
+    box-shadow: none;
     cursor: pointer;
 }
+
 input[type="submit"]:focus,
 input[type="button"]:focus,
 .button:focus,
 button:focus {
     outline: none;
-    box-shadow: none; 
-   
+    box-shadow: none;
+
 }
 
 input[type="text"]:focus,
@@ -116,7 +144,6 @@ input[type="number"]:focus,
 input[type="password"]:focus {
     outline: none;
 }
-
 
 
 
@@ -154,21 +181,27 @@ input[type="password"]:focus {
     }
 }
 
+
+
 .app {
-    /* height: calc(var(--vh) * 100); */
-    height: calc(100vh);
-    /*fallback to 100 vh if browser is older*/
-    height: 100dvh;
-    width: 100vw;
-    /*fallback to 100 vh if browser is older*/
-    width: 100svw;
+
+    height: var(--app-height);
+    width: var(--app-width);
+
+
     background-color: var(--light-black);
     box-sizing: border-box;
-    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    overflow: hidden;
+    /* align-items: center; */
+
+    
+
+
+
+
+
 
 }
 
@@ -199,15 +232,16 @@ input[type="password"]:focus {
 }
 
 .dashboard> :nth-child(1) {
+    /* this is navbar */
     height: calc(var(--nav-height));
     background-color: var(--light-grey);
-    padding-inline: calc(3*var(--min-padding));
+
     padding-block: var(--med-padding);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: sticky;
-    top: 0;
+
+
 
 
 }
@@ -215,31 +249,59 @@ input[type="password"]:focus {
 .dashboard> :nth-child(1)>* {
     /* this is the three elements in header */
     height: 100%;
-    width: 10%;
+    /* width: 10%; */
     min-width: 50px;
-    max-width: 100px;
-    padding: var(--max-padding);
+    
+    padding: var(--min-padding);
     outline: none;
     border: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 
 }
 
 .dashboard> :nth-child(1)> :nth-child(1) {
+    /* this is back button red */
 
     background-color: red;
     visibility: hidden;
+    width: var(--nav-height);
+    aspect-ratio: 1/1;
 
 
 }
+.dashboard> :nth-child(1)> :nth-child(2)  {
+    flex: 1;
+    
+    justify-content: start;
+
+}
+.selected-username-holder  {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-inline: var(--max-padding);
+    border-left: calc(5*var(--border-size)) solid var(--extra-light-grey);
+
+}
+.selected-username-holder-noborder  {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-inline: var(--max-padding);
+}
+
 
 .dashboard> :nth-child(1)> :nth-child(3) {
     /* this is select like tag which stores aside */
     background-color: transparent;
     padding: var(--max-padding);
     position: relative;
-    height: 100%;
-    width: 20%;
+    
+    width: var(--nav-height);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -265,13 +327,13 @@ input[type="password"]:focus {
     box-shadow: 1px 1px 10px 1px var(--light-black);
     min-height: 80px;
     top: calc(var(--nav-height)/5);
-    transition: right 0.4s ease, left 0.4s ease;
-    
+    transition: right 0.4s ease-in, left 0.4s ease-out;
+
     display: flex;
     flex-direction: column;
     z-index: 1;
-    right: -100vw;
-    
+    right: 105vw;
+
 
 }
 
@@ -283,29 +345,38 @@ input[type="password"]:focus {
     align-self: center;
 }
 
-.dashboard> :nth-child(1)> :nth-child(2) {
+.dashboard> :nth-child(1)> :nth-child(2) .selectedReceiver {
     text-align: start;
     padding: var(--max-padding);
-    flex: 1;
+    font-family: cursive;
+
 }
 
 
 .dashboard> :nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    
     height: calc(100% - var(--nav-height));
-    /* background-color: var(--light-grey); */
+    background: linear-gradient(to top, var(--light-black), var(--light-grey));
+
+
 }
 
-.dashboard .dashboard-overlay {
-    opacity: 0;
+.dashboard-overlay{
+    display: none;
     position: absolute;
-    height: 100svh;
-    width: 100svw;
+    height: 100%;
+    width: 100%;;
+    background-color: transparent;
 }
+
+
 
 .users-container {
     background-color: var(--light-black);
     height: 100%;
-    overflow-y: scroll;
+
 }
 
 .users-container>* {
@@ -331,48 +402,49 @@ input[type="password"]:focus {
 }
 
 
-.user-vs-chat-container {
-    height: calc(100% - var(--nav-height));
-    background: linear-gradient(to top, var(--light-black), var(--light-grey));
-    
-
-
-}
+.user-vs-chat-container {}
 
 .user-vs-chat-container> :nth-child(1) {
-    /* height: calc(100vh - 2*var(--nav-height) - var(--extra-height-in-android-chrome) );  */
-    /* height: calc(100svh - 2*var(--nav-height) ); */
-    height: calc(100% - 2*var(--nav-height));
+    /*  */
+    /* chatcssection */
+    height: calc(100% - var(--nav-height) - var(--offset-for-keyboard));
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
-    flex: 1;
-    flex-shrink: 0;
+
     padding: var(--max-padding);
     background-color: transparent;
-    border-top: 1px inset var(--border-color);
+    border-top: calc(2*var(--border-size)) inset var(--border-color);
+
+
+
 
 }
 
 .user-vs-chat-container> :nth-child(2) {
     /* this is bottom tab */
-    height: calc(1*var(--nav-height));
+
+    height: calc(var(--nav-height));
     display: flex;
     align-items: start;
     justify-content: center;
+    padding-inline: var(--max-padding);
+    column-gap: var(--med-margin);
     position: relative;
     /* bottom: 0; */
     background-color: transparent;
-    
-    
-    
+
+
+
+
+
 }
 
 
 .user-vs-chat-container> :nth-child(1)>* {
 
     /* these are chats fields */
-    height: max-content;
+    /* height: max-content; */
     width: 80%;
     position: relative;
     padding-block: var(--med-padding);
@@ -398,58 +470,66 @@ input[type="password"]:focus {
 .user-vs-chat-container> :nth-child(1)>*> :nth-child(2) {
     /* this is pointing to chats sub details */
     font-size: var(--mini-font-size);
-    
+
 }
 
 
 
 
-.user-vs-chat-container> :nth-child(2)> :nth-child(1)  {
+.user-vs-chat-container> :nth-child(2)> :nth-child(1) {
+    /* this is msg sender text box container */
     height: 100%;
-    width:80%;
-    padding-inline: var(--max-padding);
+    flex: 1;
+    /* padding-inline: var(--max-padding); */
     display: flex;
-    justify-content: end;
-    align-items: start;
+    justify-content: center;
+    align-items: center;
 }
 
 .user-vs-chat-container> :nth-child(2)> :nth-child(2) {
+    /* this is send button container */
     height: 100%;
-    width: 20%;
     display: flex;
     justify-content: center;
-    align-items: start;
+    align-items: center;
+    width: var(--nav-height);
+    aspect-ratio: 1/1;
+
 
 }
 
-.user-vs-chat-container> :nth-child(2)> :nth-child(1) > * {
+.user-vs-chat-container> :nth-child(2)> :nth-child(1)>* {
     /* this is input msg send textbox */
-    min-width: 180px;
+    /* min-width: 180px; */
     width: 100%;
-    height: var(--nav-height);
+    height: 100%;
     border: var(--border-size) solid var(--border-color);
     border-radius: calc(2*var(--large-border-radius));
-   
-    
+
+
 
 }
 
-.user-vs-chat-container> :nth-child(2)> :nth-child(2) >* {
+.user-vs-chat-container> :nth-child(2)> :nth-child(2)>* {
     /* this is input msg send button */
-    width: 50px;
-    /* background-color: red; */
-    height: 50px;
-    /* border-top-right-radius: var(--large-border-radius); */
+
+    height: 100%;
+    width: 100%;
+
+    /* height: calc(var(--nav-height) - 8*var(--border-size)); */
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
-    right: var(--max-padding);
 
 
 }
 
+.container-sign-in {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 
 .container-sign-in>* {
@@ -462,10 +542,7 @@ input[type="password"]:focus {
     min-width: 200px;
 }
 
-.container-sign-in> :nth-child(1) {
-    position: absolute;
-    z-index: -1;
-}
+
 
 .signin-box {
     display: flex;
@@ -564,7 +641,5 @@ input[type="password"]:focus {
         height: max-content;
     }
 
-    .app {
-        overflow-y: auto;
-    }
+
 }
