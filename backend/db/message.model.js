@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
 const messageSchema = new Schema({
-  sender: {
+  senderId: {
     type: String,
     required: true
   },
-  receiver: {
+  receiverId: {
     type: String,
     required: true
   },

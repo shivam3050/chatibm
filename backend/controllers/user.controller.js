@@ -3,11 +3,11 @@ import { Message } from "../db/message.model.js"
 import { WebSocketServer } from 'ws';
 import { parse } from "url"
 
-export const createNewOneChat = async (sender, receiver, message, createdAt) => {
+export const createNewOneChat = async (senderId, receiverId, message, createdAt) => {
     try {
         const user = await Message.create({
-            sender: sender,
-            receiver: receiver,
+            senderId: senderId,
+            receiverId: receiverId,
             content: message,
             createdAt: createdAt
         })
@@ -18,20 +18,20 @@ export const createNewOneChat = async (sender, receiver, message, createdAt) => 
     }
 }
 
-export const getChatList = async (sender, receiver) => {
+export const getChatList = async (senderId, receiverId) => {
     try {
         const messages = await Message.find(
             {
                 $or: [
                     {
-                        sender: sender, receiver: receiver
+                        senderId: senderId, receiverId: receiverId
                     },
                     {
-                        sender: receiver, receiver: sender
+                        senderId: receiverId, receiverId: senderId
                     }
                 ]
             },
-            { sender: 1, receiver: 1, content: 1, createdAt: 1, _id: 0 }
+            { senderId: 1, receiverId: 1, content: 1, createdAt: 1, _id: 0 }
         ).sort({ createdAt: 1 })
 
 
@@ -42,16 +42,16 @@ export const getChatList = async (sender, receiver) => {
     }
 }
 
-export const deleteUserAllChats = async (username) => {
+export const deleteUserAllChats = async (userId) => {
     try {
         await Message.deleteMany(
             {
                 $or: [
                     {
-                        sender: username
+                        senderid: userId
                     },
                     {
-                        receiver: username
+                        receiverid: userId
                     }
                 ]
             })
@@ -63,6 +63,32 @@ export const deleteUserAllChats = async (username) => {
         return false
     }
 }
+
+
+
+class Client {
+    static counter = 0;
+    static lastTimeStamp = 0;
+
+    constructor(username, age, socket) {
+        this.username = username,
+
+            this.socket = socket,
+            this.age = age,
+            this.id = this.generateId()
+
+    }
+
+    generateId() {
+        const now = Date.now();
+        if (now !== Client.lastTimeStamp) {
+            Client.lastTimeStamp = now;
+            Client.counter = 0;
+        }
+        return `${now}${Client.counter++}`;
+    }
+}
+
 
 
 
@@ -79,6 +105,7 @@ export const deleteUserAllChats = async (username) => {
 
 
 const activeClients = new Map()
+
 export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
     const server = new WebSocketServer(
         {
@@ -98,12 +125,12 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
 
 
                 }
-                if (!allowed){
+                if (!allowed) {
                     console.log('Connection rejected from origin:', origin);
                     done(false, 403, 'Forbidden');
                 }
 
-               
+
             }
         }
     );
@@ -112,6 +139,11 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
     }
     server.on("connection", async (socket, request) => {
         console.log("connected")
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve()
+            }, 3000)
+        })
 
 
         const { query } = parse(request.url, true)
@@ -129,18 +161,18 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             socket.close(1008, "a user already exists")
             return
         }
+        const availableUsers = [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, id: client.id }))
+        const client = new Client(username, age, socket)
 
-        const availableUsers = [...activeClients.entries()].map(([username, data], _, __) => ({ username, age: data.age }))
-        activeClients.set(username, {
-            currentSocket: socket,
-            age: age
-        });
+        activeClients.set(username, client);
+
 
         socket.send(JSON.stringify(
             {
-                username: username,
+                username: client.username,
                 type: "register",
-                age: age,
+                age: client.age,
+                id: client.id,
 
                 availableUsers: availableUsers
 
@@ -151,41 +183,43 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             let data = null
             try {
                 data = await JSON.parse(message);
-
+                console.log(data)
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
             const sender = data?.sender
             const receiver = data?.receiver
             const type = data?.type
+            const queryType = data?.queryType
 
 
 
             if (!type) {
                 return console.error("type is not availbale")
             }
-            if (type === "chatlistdemand") {
-                if (!sender || !receiver) {
-                    return console.error("sender or recievr not provided")
-                }
+            // if (type === "chatlistdemand") {
+            //     if (!sender || !receiver) {
+            //         return console.error("sender or recievr not provided")
+            //     }
 
-                socket.send(
-                    JSON.stringify({
-                        status: "success",
-                        sender: sender,
-                        reciever: receiver,
-                        type: type,
-                        msg: await getChatList(sender, receiver)
-                    })
-                )
-                return
-            }
+            //     socket.send(
+            //         JSON.stringify({
+            //             status: "success",
+            //             sender: sender,
+            //             reciever: receiver,
+            //             type: type,
+            //             msg: await getChatList(sender.id, receiver.id)
+            //         })
+            //     )
+            //     return
+            // }
             else if (type === "message") {
 
                 const createdAt = data.createdAt
 
-                const userObject = activeClients.get(receiver)
-                if (!userObject) {
+                const userObject = activeClients.get(receiver.username)
+
+                if (!userObject || userObject.id!==receiver.id) {
 
                     return socket.send(JSON.stringify(
                         {
@@ -194,11 +228,14 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                             receiver: receiver,
                             type: "message",
                             createdAt: createdAt,
-                            msg: "no receiver available"
+                            msg: "user is now offline"
                         }
                     ))
                 }
-                const { currentSocket } = userObject
+
+                const currentSocket = userObject.socket
+
+
                 if (!currentSocket || currentSocket.readyState !== 1) {
 
 
@@ -209,14 +246,14 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                             receiver: receiver,
                             type: "message",
                             createdAt: createdAt,
-                            msg: "no receiver available"
+                            msg: "recievr is not ready"
                         }
                     ))
                 }
 
 
 
-                const result = await createNewOneChat(sender, receiver, data.message, createdAt)
+                const result = await createNewOneChat(sender.id, receiver.id, data.message, createdAt)
                 if (!result) {
                     return socket.send(
                         JSON.stringify({
@@ -225,7 +262,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                             receiver: receiver,
                             type: "message",
                             createdAt: createdAt,
-                            msg: data.message
+                            msg: "chat not created in db"
                         })
                     )
                 }
@@ -258,17 +295,64 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             }
 
             else if (type === "query-message") {
-                socket.send(
-                    JSON.stringify({
-                        status: "success",
-                        sender: sender,
-                        receiver: receiver,
-                        type: "query-message",
-                        query: "refresh-all-user",
-                        msg: [...activeClients.entries()].map(([username, itsValue], _, __) => ({ username, age: itsValue.age })).filter((item, _, __) => (item.username !== sender))
-                        // msg: await searchAllUsers()
-                    })
-                )
+
+                if (queryType === "chat-list-demand") {
+                    if (!sender || !receiver) {
+                        return console.error("sender or recievr not provided")
+                    }
+
+                    const client = activeClients.get(receiver.username)
+
+                    if (!client || client.id !== receiver.id) {
+
+                        socket.send(
+                            JSON.stringify({
+                                status: "failed",
+                                sender: sender,
+                                receiver: receiver,
+                                type: type,
+                                query: queryType,
+                                msg: `${sender.username} is offline now`
+                            })
+                        )
+
+                        return
+                    }
+
+                    socket.send(
+                        JSON.stringify({
+                            status: "success",
+                            sender: sender,
+                            receiver: receiver,
+                            type: type,
+                            query: queryType,
+                            msg: await getChatList(sender.id, receiver.id)
+                        })
+                    )
+                    return
+                }
+                else if (queryType === "refresh-all-user") {
+                    socket.send(
+                        JSON.stringify({
+                            status: "success",
+                            sender: sender,
+                            type: type,
+                            query: queryType,
+                            msg: [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, id: client.id })).filter((item, _, __) => (item.id !== sender.id))
+                            // msg: await searchAllUsers()
+                        })
+                    )
+                    return
+                }
+                else {
+                    console.log(queryType)
+                    console.error("invalid query under the valid type")
+                    return
+                }
+
+
+
+
                 return
             }
             else {

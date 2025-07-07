@@ -1,4 +1,19 @@
 :root {
+    height: var(--app-height);
+    width: var(--app-width);
+}
+
+
+#root {
+
+
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+
 
 
     font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -7,6 +22,7 @@
 
     color-scheme: light dark;
     color: rgba(255, 255, 255, 0.87);
+    text-shadow: 1px 1px 1px var(--dark-black);
     --light-color: white;
     background-color: #000000;
     background-color: var(--light-black);
@@ -14,7 +30,7 @@
 
 
 
-  
+
 
 
 
@@ -28,6 +44,7 @@
     --dark-grey: #303030;
     --light-grey: #424242;
     --extra-light-grey: #636363;
+    --chats-overlay-color: rgba(99, 99, 99, 0.5);
 
     --professional-blue: rgb(0, 100, 255);
 
@@ -39,7 +56,7 @@
     -moz-osx-font-smoothing: grayscale;
 
     --nav-height: 50px;
-    --toggle-select-width: 25svw;
+    --toggle-select-width: 35vw;
     --border-color: #565656;
     --border-size: 0.5px;
 
@@ -78,7 +95,13 @@
     }
 }
 
-
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
 
 
 * {
@@ -102,6 +125,39 @@ div {
     -webkit-tap-highlight-color: transparent;
 }
 
+
+svg {
+    /* text-shadow: 1px 1px 1px var(--dark-black); */
+}
+
+svg:active {
+  /* Your active styles here */
+  transform: scale(0.95);
+  stroke: white;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+
+
+fieldset {
+    background-color: var(--light-black);
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    
+}
+
+legend {
+    background-color: var(--light-black);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding-inline: var(--max-padding);
+    font-size: 0.75em;
+    color: var(--professional-blue);
+}
+
+
 input[type="text"],
 input[type="number"],
 input[type="password"],
@@ -112,6 +168,7 @@ textarea {
     background-color: var(--light-black);
     outline: none;
     border: none;
+    
 }
 
 input[type="submit"],
@@ -182,11 +239,20 @@ input[type="password"]:focus {
 }
 
 
+#root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+
 
 .app {
 
-    height: var(--app-height);
-    width: var(--app-width);
+    height: 100%;
+    width: 100%;
 
 
     background-color: var(--light-black);
@@ -196,7 +262,7 @@ input[type="password"]:focus {
     justify-content: center;
     /* align-items: center; */
 
-    
+
 
 
 
@@ -221,6 +287,7 @@ input[type="password"]:focus {
 
 .container-sign-in {
     height: 50%;
+    width: 90%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -247,11 +314,11 @@ input[type="password"]:focus {
 }
 
 .dashboard> :nth-child(1)>* {
-    /* this is the three elements in header */
+    /* this is the all elements in header */
     height: 100%;
     /* width: 10%; */
     min-width: 50px;
-    
+
     padding: var(--min-padding);
     outline: none;
     border: none;
@@ -273,13 +340,17 @@ input[type="password"]:focus {
 
 
 }
-.dashboard> :nth-child(1)> :nth-child(2)  {
+
+.dashboard> :nth-child(1)> :nth-child(2) {
+    /* this si reciver name */
     flex: 1;
     
+    font-size: 20px;
     justify-content: start;
 
 }
-.selected-username-holder  {
+
+.selected-username-holder {
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -287,20 +358,45 @@ input[type="password"]:focus {
     border-left: calc(5*var(--border-size)) solid var(--extra-light-grey);
 
 }
-.selected-username-holder-noborder  {
+
+.selected-username-holder-noborder {
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     padding-inline: var(--max-padding);
 }
 
-
 .dashboard> :nth-child(1)> :nth-child(3) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+
+.svg-container-inbox-icon::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    aspect-ratio: 1/1;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    top: 55%;
+    right: 30%;
+
+
+}
+
+
+
+
+.dashboard> :nth-child(1)> :nth-child(4) {
     /* this is select like tag which stores aside */
     background-color: transparent;
     padding: var(--max-padding);
     position: relative;
-    
+
     width: var(--nav-height);
     display: flex;
     justify-content: center;
@@ -311,7 +407,7 @@ input[type="password"]:focus {
 
 }
 
-.dashboard> :nth-child(1)> :nth-child(3)> :nth-child(1) {
+.dashboard> :nth-child(1)> :nth-child(4)> :nth-child(1) {
     /* this is three dots div */
     display: flex;
     justify-content: center;
@@ -319,7 +415,7 @@ input[type="password"]:focus {
 
 }
 
-.dashboard> :nth-child(1)> :nth-child(3)> :nth-child(2) {
+.dashboard> :nth-child(1)> :nth-child(4)> :nth-child(2) {
     /* this is aside tag */
     width: var(--toggle-select-width);
     background-color: var(--dark-grey);
@@ -332,12 +428,12 @@ input[type="password"]:focus {
     display: flex;
     flex-direction: column;
     z-index: 1;
-    right: 105vw;
+    /* right: 105vw; */
 
 
 }
 
-.dashboard> :nth-child(1)> :nth-child(3)> :nth-child(2)>* {
+.dashboard> :nth-child(1)> :nth-child(4)> :nth-child(2)>* {
     /* this are options inside aside */
     background-color: transparent;
     height: var(--nav-height);
@@ -349,25 +445,28 @@ input[type="password"]:focus {
     text-align: start;
     padding: var(--max-padding);
     font-family: cursive;
+    text-shadow: 2px 2px 2px black;
 
 }
 
 
 .dashboard> :nth-child(2) {
+    position: relative;
     display: flex;
     flex-direction: column;
-    
+
     height: calc(100% - var(--nav-height));
     background: linear-gradient(to top, var(--light-black), var(--light-grey));
 
 
 }
 
-.dashboard-overlay{
+.dashboard-overlay {
     display: none;
     position: absolute;
     height: 100%;
-    width: 100%;;
+    width: 100%;
+    ;
     background-color: transparent;
 }
 
@@ -386,23 +485,38 @@ input[type="password"]:focus {
     border: 1px solid var(--border-color);
     margin: var(--med-margin);
     display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    padding: var(--max-padding);
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    padding: var(--med-padding);
+    column-gap: var(--med-margin);
 }
 
 .users-container>*> :nth-child(1) {
+    border: var(--border-size) inset white;
+    height: calc(var(--nav-height) * 1.15 - var(--med-padding));
+    width: calc(var(--nav-height) * 1.15 - var(--med-padding));
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvPso8yha9Y63fjz7GWsz2I6DFgIQ59JLl3w&s");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+}
+
+.users-container>*> :nth-child(2)> :nth-child(1) {
     /* this is username field */
     font-size: var(--med-font-size);
 }
 
-.users-container>*> :nth-child(2) {
+.users-container>*> :nth-child(2)> :nth-child(2) {
     /* this is users age */
     font-size: var(--mini-font-size);
 }
 
 
-.user-vs-chat-container {}
+
 
 .user-vs-chat-container> :nth-child(1) {
     /*  */
@@ -454,7 +568,7 @@ input[type="password"]:focus {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border-radius: var(--med-border-radius);
+    border-radius: calc(5*var(--med-border-radius));
     border: 1px solid var(--light-black);
 
 
@@ -467,9 +581,12 @@ input[type="password"]:focus {
     font-size: var(--med-font-size);
 }
 
-.user-vs-chat-container> :nth-child(1)>*> :nth-child(2) {
+.user-vs-chat-container> :nth-child(1)>*> :nth-child(2),
+.chatTextStatus {
     /* this is pointing to chats sub details */
     font-size: var(--mini-font-size);
+    display: flex;
+    justify-content: end;
 
 }
 
@@ -529,6 +646,8 @@ input[type="password"]:focus {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
+    width: 100%;
 }
 
 
@@ -548,6 +667,7 @@ input[type="password"]:focus {
     display: flex;
     justify-content: center;
     flex-direction: column;
+    height: max-content;
 }
 
 .signin-box>* {
@@ -584,6 +704,9 @@ input[type="password"]:focus {
     transition: opacity 4s ease-out;
     opacity: 1;
     outline: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 }
 

@@ -2,16 +2,16 @@ import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 
 
-export const UserSection = (props) => {
+export const MyRecentContactSection = (props) => {
 
 
 
 
-    const [updateAvailableUsersInUI, setUpdateAvailableUsersInUI] = useState([])
+    const [updateAvailableConnectedUsersInUI, setUpdateAvailableConnectedUsersUsersInUI] = useState([])
 
     useEffect(()=>{
-        if(props.userRef.current.availableUsers){
-            setUpdateAvailableUsersInUI(props.userRef.current.availableUsers)
+        if(props.userRef.current.availableConnectedUsers){
+            setUpdateAvailableConnectedUsersUsersInUI(props.userRef.current.availableConnectedUsers)
         }
      
             return 
@@ -21,11 +21,11 @@ export const UserSection = (props) => {
 
 
 
-        if (!props.userRef || !props.userRef.current.availableUsers || props.userRef.current.availableUsers.length === 0) {
+        if (!props.userRef || !props.userRef.current.availableConnectedUsers || props.userRef.current.availableConnectedUsers.length === 0) {
             return (<div className="any-label"
                 style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
             >
-                No users active
+                No recent connections
     
             </div>)
         } 
@@ -34,7 +34,7 @@ export const UserSection = (props) => {
 
         return <div className="users-container">
             {
-                updateAvailableUsersInUI.map((user, index) => {
+                updateAvailableConnectedUsersInUI.map((user, index) => {
                     return (
                         <div
                             onClick={
@@ -44,11 +44,27 @@ export const UserSection = (props) => {
                                         return console.error("socket is not ready")
                                     }
 
+//                                     {
+//   sender: { username: 'dfvf', id: '17518942509320' },
+//   receiver: { username: 'dfvf', id: '17518942509320' },
+//   type: 'query-message',
+//   queryType: 'chat-list-demand'
+// }
+// this is the issue both sender and reciever
+                                    console.log(
+                                            {
+                                                sender:{username: props.userRef.current.username, id: props.userRef.current.id},
+                                                receiver:{username: user.username, id: user.id},
+                                                type:"query-message",
+                                                queryType:"chat-list-demand"
+                                            }
+                                    )
+
                                     props.socketContainer.current.send(
                                         JSON.stringify(
                                             {
-                                                sender:{username: props.userRef.current.username, id: props.userRef.current.id, age: props.userRef.current.age},
-                                                receiver:{username: user.username, id: user.id, age: user.age},
+                                                sender:{username: props.userRef.current.username, id: props.userRef.current.id},
+                                                receiver:{username: user.username, id: user.id},
                                                 type:"query-message",
                                                 queryType:"chat-list-demand"
                                             }

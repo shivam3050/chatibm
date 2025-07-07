@@ -1,0 +1,132 @@
+import React, { useEffect, useState } from 'react'
+import { ChatSection } from './chat';
+
+
+function ChatsRoute(props) {
+
+
+
+
+
+
+
+    return (
+        <aside className="user-vs-chat-container" >
+            <ChatSection userRef={props.userRef} chatRef={props.chatRef} refreshChatsFlag={props.refreshChatsFlag} />
+            <form className="formCreateChat" action="" method="post"
+                onSubmit={(e) => {
+
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const message = formData.get("message")
+
+                    if (!props.socketContainer.current || props.socketContainer.current.readyState !== 1) {
+                        console.error("socket is not ready")
+                        return
+                    }
+
+                    const date = new Date()
+
+                    const createdAt = date.toDateString()
+
+                    const chatsDiv = document.getElementById("chats-div")
+
+                    const chatField = document.createElement("div")
+
+                    if(props.userRef.current.id!==props.chatRef.current.receiver){
+                        chatField.style.alignSelf = "flex-end"
+                    }
+                    else {
+                        chatField.style.alignSelf = "flex-start"
+                    }
+
+                    chatField.classList.add("newly-unupdated-chats")
+
+                    const chatTextField = document.createElement("div")
+
+                    const chatStatusField = document.createElement("div")
+
+                    chatTextField.textContent = message
+
+                    chatStatusField.textContent = `${createdAt}`
+
+                    chatField.appendChild(chatTextField)
+
+                    chatField.appendChild(chatStatusField)
+
+                    chatsDiv.appendChild(chatField)
+
+                    chatField.scrollIntoView({behavior: "smooth",block: "start" })
+
+                    props.socketContainer.current.send(
+                        JSON.stringify(
+                            {
+                                type: "message",
+                                message: message,
+                                createdAt: createdAt,
+                                receiver: props.chatRef.current.receiver,
+                                sender: { username: props.userRef.current.username, id: props.userRef.current.id ,age: props.userRef.current.age }
+                            }
+                        )
+                    )
+                    const textarea = e.target.querySelector('[name="message"]');
+
+                    textarea.value = ""
+                    textarea.focus()
+
+                }}>
+                <div>
+                    <textarea required
+
+                        spellCheck="false"
+
+                        onFocus={(e) => {
+
+                            // props.updateViewportVars()
+                        }}
+                        onBlur={(e) => {
+
+                            // props.updateViewportVars()
+                        }}
+
+                        style={{ resize: "none" }} placeholder={`Send to ${props.chatRef.current.receiver.username}...`} name="message" maxLength="500">
+
+                    </textarea>
+                </div>
+                <div>
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                            <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+
+
+            <div className="chats-overlay" 
+                style={
+                    {
+                        display: props.chatsOverlay?"flex":"none",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        position:"absolute",
+                        height:"100%",
+                        width:"100%",
+                        backgroundColor:"var(--chats-overlay-color)",
+                        color:"rgba(255,0,0,0.6)",
+                        fontSize:"20px",
+                        fontWeight:"bold",
+                        textShadow:"2px 2px 2px var(--dark-black)"
+                        
+                    }
+                }
+            >
+                user is now offline !
+            </div>
+        </aside>
+
+    )
+}
+
+export default ChatsRoute
