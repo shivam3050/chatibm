@@ -10,7 +10,7 @@ export function Home(props) {
     // states to update only ui and none
     const [selectedReceiver, setSelectedReceiver] = useState("")
 
-    const [headerTitle, setHeaderTitle] = useState("")
+    const [headerTitle, setHeaderTitle] = useState("ChatIBM")
 
     const [toggleSelect, setToggleSelect] = useState(false)
 
@@ -146,7 +146,7 @@ export function Home(props) {
                     if (userRef.current.availableUsers) {
                         props.setRefreshUsersFlag(prev => prev + 1)
                         navigate("/users")
-                        setHeaderTitle("Online Users")
+                        setHeaderTitle("ChatIBM")
 
                     }
 
@@ -159,7 +159,13 @@ export function Home(props) {
 
                     if (data.status === "failed") {
 
-                        setChatsOverlay(true)
+                        props.setChatsOverlay(true)
+
+                        navigate("/chats")
+
+                        setHeaderTitle("")
+                        
+                        console.log("navigated to chats")
                         return
                     }
                     //below is for success

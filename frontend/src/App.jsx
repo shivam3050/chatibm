@@ -30,7 +30,7 @@ function App() {
 
   const [refreshChatsFlag, setRefreshChatsFlag] = useState(0)
 
-  const [chatsOverlay, setChatsOverlay ] = useState("hgv")
+  const [chatsOverlay, setChatsOverlay ] = useState("")
 
 
 
