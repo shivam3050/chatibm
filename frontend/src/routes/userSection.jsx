@@ -17,7 +17,7 @@ export const UserSection = (props) => {
             return 
        
 
-    },[props.refreshUsersFlag])
+    },[props.refreshGlobalUsersFlag])
 
 
 

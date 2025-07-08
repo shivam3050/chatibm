@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useEffect } from "react";
 
 
@@ -10,11 +10,15 @@ export const ChatSection = (props) => {
 
         setAvailableChatsInUI(props.chatRef.current.availableChats)
 
-        const chatDiv = document.getElementById("chats-div")
-
-        chatDiv?.scrollTo({ top: chatDiv?.scrollHeight, behavior: 'smooth' })
-
     }, [props.refreshChatsFlag])
+
+        useLayoutEffect(() => {
+        const chatDiv = document.getElementById("chats-div");
+        chatDiv?.scrollTo({
+            top: chatDiv.scrollHeight,
+            behavior: "smooth"
+        });
+    }, [availableChatsInUI]);
 
     if (!props.chatRef.current || props.chatRef.current.availableChats.length === 0) {
         
@@ -39,7 +43,6 @@ export const ChatSection = (props) => {
                     let timeDiff = new Date() - originalDate; // in milliseconds  
                     let timeText;
 
-                    console.log(item.senderId ,"::" ,props.userRef.current.id)
 
                     if (timeDiff < 60 * 1000) {
                         // timeText = `${Math.floor(timeDiff / 1000)} seconds`;
@@ -62,11 +65,11 @@ export const ChatSection = (props) => {
                             }
                         } key={index}>
 
-                            <div className="main-chat-text">
+                            <pre className="main-chat-text">
 
                                 {item.content}
 
-                            </div>
+                            </pre>
 
                             <div className="chatTextStatus">
 

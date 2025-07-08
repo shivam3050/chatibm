@@ -4,8 +4,15 @@ import { ChatSection } from './chat';
 
 function ChatsRoute(props) {
 
+    const [selectedReceiver, setSelectedReceiver] = useState("")
 
+useEffect(()=>{
+    if(props.chatRef.current?.receiver?.username){
 
+        setSelectedReceiver(props.chatRef.current.receiver.username)
+
+    }
+},[props.refreshChatsFlag])
 
 
 
@@ -42,7 +49,7 @@ function ChatsRoute(props) {
 
                     chatField.classList.add("newly-unupdated-chats")
 
-                    const chatTextField = document.createElement("div")
+                    const chatTextField = document.createElement("pre")
 
                     const chatStatusField = document.createElement("div")
 
@@ -56,7 +63,7 @@ function ChatsRoute(props) {
 
                     chatsDiv.appendChild(chatField)
 
-                    chatField.scrollIntoView({behavior: "smooth",block: "start" })
+                    chatsDiv?.scrollTo({ top: chatsDiv?.scrollHeight, behavior: 'smooth' })
 
                     props.socketContainer.current.send(
                         JSON.stringify(
@@ -89,7 +96,7 @@ function ChatsRoute(props) {
                             // props.updateViewportVars()
                         }}
 
-                        style={{ resize: "none" }} placeholder={`Send to ${props.chatRef.current.receiver.username}...`} name="message" maxLength="500">
+                        style={{ resize: "none" }} placeholder={`Send to ${selectedReceiver}...`} name="message" maxLength="500">
 
                     </textarea>
                 </div>

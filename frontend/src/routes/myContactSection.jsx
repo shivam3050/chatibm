@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+
 
 
 export const MyRecentContactSection = (props) => {
@@ -36,7 +36,7 @@ export const MyRecentContactSection = (props) => {
             {
                 updateAvailableConnectedUsersInUI.map((user, index) => {
                     return (
-                        <div
+                        <div 
                             onClick={
                                 async () => {
                                    
@@ -44,21 +44,7 @@ export const MyRecentContactSection = (props) => {
                                         return console.error("socket is not ready")
                                     }
 
-//                                     {
-//   sender: { username: 'dfvf', id: '17518942509320' },
-//   receiver: { username: 'dfvf', id: '17518942509320' },
-//   type: 'query-message',
-//   queryType: 'chat-list-demand'
-// }
-// this is the issue both sender and reciever
-                                    console.log(
-                                            {
-                                                sender:{username: props.userRef.current.username, id: props.userRef.current.id},
-                                                receiver:{username: user.username, id: user.id},
-                                                type:"query-message",
-                                                queryType:"chat-list-demand"
-                                            }
-                                    )
+                                    props.userRef.current.availableConnectedUsers[index].unread=false
 
                                     props.socketContainer.current.send(
                                         JSON.stringify(
@@ -77,13 +63,19 @@ export const MyRecentContactSection = (props) => {
                             <div>
 
                             </div>
-                            <div
-                            >
+                            <div>
                                 <div>
                                     {user.username}
                                 </div>
                                 <div>
                                     {`Age ${user.age} yrs`}
+                                </div>
+                            </div>
+
+
+                            <div className="unread-highlight-container">
+                                <div className={user.unread ? "unread-notification-highlight-icon" : ""}>
+
                                 </div>
                             </div>
                         </div>

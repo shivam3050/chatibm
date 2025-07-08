@@ -8,7 +8,8 @@ function AllUsers(props) {
             <UserSection
                 userRef={props.userRef}
                 socketContainer={props.socketContainer}
-                refreshUsersFlag={props.refreshUsersFlag}
+                refreshGlobalUsersFlag={props.refreshGlobalUsersFlag}
+
             />
 
         </div>

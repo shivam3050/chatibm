@@ -28,6 +28,8 @@ function App() {
 
   const [refreshUsersFlag, setRefreshUsersFlag] = useState(0)
 
+  const [refreshGlobalUsersFlag, setRefreshGlobalUsersFlag] = useState(0)
+
   const [refreshChatsFlag, setRefreshChatsFlag] = useState(0)
 
   const [chatsOverlay, setChatsOverlay ] = useState("")
@@ -92,9 +94,13 @@ function App() {
 
           setRefreshUsersFlag={setRefreshUsersFlag}
 
+          setRefreshGlobalUsersFlag={setRefreshGlobalUsersFlag}
+
           setRefreshChatsFlag={setRefreshChatsFlag}
 
           setChatsOverlay={setChatsOverlay}
+
+
 
 
 
@@ -106,7 +112,7 @@ function App() {
 
             socketContainer={socketContainer}
 
-            refreshUsersFlag={refreshUsersFlag}
+            refreshGlobalUsersFlag={refreshGlobalUsersFlag}
 
             
 
@@ -123,7 +129,7 @@ function App() {
 
                   socketContainer={socketContainer}
 
-                  refreshUsersFlag={refreshUsersFlag}
+                  refreshGlobalUsersFlag={refreshGlobalUsersFlag}
                 />
              
             }

@@ -139,11 +139,6 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
     }
     server.on("connection", async (socket, request) => {
         console.log("connected")
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                resolve()
-            }, 3000)
-        })
 
 
         const { query } = parse(request.url, true)
@@ -183,7 +178,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             let data = null
             try {
                 data = await JSON.parse(message);
-                console.log(data)
+             
             } catch (error) {
                 console.error(error)
             }
@@ -345,7 +340,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                     return
                 }
                 else {
-                    console.log(queryType)
+                  
                     console.error("invalid query under the valid type")
                     return
                 }

@@ -114,10 +114,11 @@ export function Home(props) {
             }
 
             if (data.type === "register") {
-                console.log(data.type)
-                console.log(data)
+         
 
                 setUser(data.username)
+
+                // here is the structure
 
                 userRef.current = {
 
@@ -137,15 +138,16 @@ export function Home(props) {
             if (data.type === "query-message") {
 
                 if (data.query === "refresh-all-user") {
-                    console.log(data.type)
-                    console.log(data.query)
-                    console.log(data)
+              
 
                     userRef.current.availableUsers = data.msg
 
                     if (userRef.current.availableUsers) {
-                        props.setRefreshUsersFlag(prev => prev + 1)
+
+                        props.setRefreshGlobalUsersFlag(prev => prev + 1)
+
                         navigate("/users")
+
                         setHeaderTitle("ChatIBM")
 
                     }
@@ -153,9 +155,7 @@ export function Home(props) {
                     return
                 }
                 if (data.query === "chat-list-demand") {
-                    console.log(data.type)
-                    console.log(data.query)
-                    console.log(data)
+             
 
                     if (data.status === "failed") {
 
@@ -164,11 +164,12 @@ export function Home(props) {
                         navigate("/chats")
 
                         setHeaderTitle("")
-                        
-                        console.log("navigated to chats")
+
                         return
                     }
                     //below is for success
+
+                    // here is the structure
 
                     chatRef.current = {
 
@@ -188,6 +189,8 @@ export function Home(props) {
 
                         navigate("/chats")
 
+                        userRef.current.availableUsers.unread = false
+
                         return
                     }
 
@@ -198,8 +201,7 @@ export function Home(props) {
             }
 
             if (data.type === "message") {
-                console.log(data.type)
-                console.log(data)
+        
 
                 if (data.sender.id === userRef.current.id) {
 
@@ -223,18 +225,18 @@ export function Home(props) {
                     }
 
 
-                    console.log("your msg sent successfully via server")
-
 
                     // checks if receiver already in my contacts or not
                     if (!(userRef.current.availableConnectedUsers.some((obj) => (obj.id === data.receiver.id)))) {
+
                         // this is means not present
                         userRef.current.availableConnectedUsers.push(
                             {
 
                                 username: data.receiver.username,
                                 age: data.receiver.age,
-                                id: data.receiver.id
+                                id: data.receiver.id,
+                                unread: false
 
                             }
                         )
@@ -285,7 +287,7 @@ export function Home(props) {
 
                     chatField.style.alignSelf = "flex-start"
 
-                    const chatTextField = document.createElement("div")
+                    const chatTextField = document.createElement("pre")
 
                     const chatStatusField = document.createElement("div")
 
@@ -299,7 +301,7 @@ export function Home(props) {
 
                     chatsDiv.appendChild(chatField)
 
-                    chatField.scrollIntoView({ behavior: "smooth", block: "start" })
+                    chatsDiv?.scrollTo({ top: chatsDiv?.scrollHeight, behavior: 'smooth' })
 
 
 
@@ -313,30 +315,64 @@ export function Home(props) {
                 if (data.receiver && data.sender.id !== chatRef.current?.receiver?.id) {
 
                     // THIS IS THE CONDITION WHERE RECEIVER IS NOT FOCUSED BUT MESSAGE CAME FROM HIM
-                    console.log("THIS IS THE CONDITION WHERE RECEIVER IS NOT FOCUSED BUT MESSAGE CAME FROM HIM")
-                    console.log("yes1")
+                    console.log("THIS IS THE CONDITION WHERE ANY RANDOM OR KNOWN RECEIVER IS NOT FOCUSED BUT MESSAGE CAME FROM HIM")
+
+
+                    if (data.status === "failed") {
+                        console.error("this is failed message by any random or known user who is unfocused")
+                        return
+                    }
+
 
                     // checks if receiver already in my contacts or not
-                    if (!(userRef.current.availableConnectedUsers.some((obj) => (obj.id === data.sender.id)))) {
-                        // this is means not present
+
+                    let searchFound = false
+
+                    for (let i = 0; i < userRef.current.availableConnectedUsers.length; i++) {
+
+                        if (userRef.current.availableConnectedUsers[i].id === data.sender.id) {
+                            // this condition shows random sender is in your recent contacts already
+                            userRef.current.availableConnectedUsers[i].unread = true
+                            searchFound = true
+                            props.setRefreshUsersFlag((prev) => (prev + 1))
+                            break
+                        }
+
+                    }
+
+                    if (!searchFound) {
+
+                        // this is means this user is not present in available contacts
+
                         userRef.current.availableConnectedUsers.push(
+
                             {
 
                                 username: data.sender.username,
                                 age: data.sender.age,
-                                id: data.sender.id
+                                id: data.sender.id,
+                                unread: true
 
                             }
                         )
-                        console.log("loggin userref for debug :: ", userRef.current)
+
+                        props.setRefreshUsersFlag((prev) => (prev + 1))
 
                     }
-                    console.log("yes2")
+
+
+
+
+
+
+
+
+
 
                     if (!inboxIconRef.current.classList.contains("svg-container-inbox-icon")) {
 
                         inboxIconRef.current.classList.add("svg-container-inbox-icon")
-                        console.log("yes3")
+
 
                     }
                     return
@@ -348,7 +384,7 @@ export function Home(props) {
                 return
             }
 
-            console.log("invalid data type in response")
+            console.error("invalid data type in response")
             return
 
         }
@@ -371,16 +407,13 @@ export function Home(props) {
 
 
         setToggleSelect(false)
-        setTimeout(() => {
 
-            console.log(toggleSelect)
-        }, 3000)
 
         if (e.target.value === "close") {
             return
         }
         if (e.target.value === "refresh") {
-            console.log("we will refresh the users")
+           
 
             if (!props.socketContainer.current || props.socketContainer.current.readyState !== 1) {
 
@@ -404,7 +437,30 @@ export function Home(props) {
             return
         }
         if (e.target.value === "logout") {
-            console.log("we will logout later")
+
+           
+
+            if (!props.socketContainer || props.socketContainer.current.readyState !== 1) {
+                window.location.href = '/';
+                return
+            }
+            props.socketContainer.current.close()
+
+            props.socketContainer.current.onmessage = null;
+            props.socketContainer.current.onerror = null;
+            props.socketContainer.current.onclose = null;
+            props.socketContainer.current.onopen = null;
+            props.socketContainer.current = null;
+
+            props.userRef.current = null;
+            props.chatRef.current = null;
+            props.setUser("")
+
+            // window.location.href = '/';
+            navigate("/")
+
+
+
 
             return
         }
@@ -428,10 +484,18 @@ export function Home(props) {
                         style={{ visibility: (selectedReceiver || headerTitle !== "ChatIBM") ? "visible" : "hidden", backgroundColor: "transparent" }}
                         onClick={
                             () => {
+
                                 setSelectedReceiver("");
-                                props.chatRef.current.availableChats = []
-                                props.chatRef.current.receiver = ""
+
+                                if (props.chatRef.current?.availableChats) { props.chatRef.current.availableChats = [] }
+
+                                if (props.chatRef.current?.receiver) {
+                                    props.chatRef.current.receiver = ""
+                                }
+
                                 navigate("/users")
+
+
                                 setHeaderTitle("ChatIBM")
                             }
                         }
@@ -467,6 +531,7 @@ export function Home(props) {
                                 }
 
                                 navigate("/mycontacts-and-notifications")
+                                props.setRefreshGlobalUsersFlag((prev) => (prev + 1))
                                 setHeaderTitle("Recent Connections")
 
                                 e.currentTarget.classList.remove("svg-container-inbox-icon")
