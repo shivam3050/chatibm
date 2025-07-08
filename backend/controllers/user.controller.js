@@ -70,11 +70,12 @@ class Client {
     static counter = 0;
     static lastTimeStamp = 0;
 
-    constructor(username, age, socket) {
+    constructor(username, age, gender, socket) {
         this.username = username,
 
             this.socket = socket,
             this.age = age,
+            this.gender = gender,
             this.id = this.generateId()
 
     }
@@ -139,10 +140,13 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
     }
     server.on("connection", async (socket, request) => {
         console.log("connected")
+        await new Promise((resolve)=>{setTimeout(()=>{resolve()},1000)})
 
 
         const { query } = parse(request.url, true)
         const username = query.username
+
+        const gender = query.gender
 
         const age = parseInt(query.age)
 
@@ -156,17 +160,19 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             socket.close(1008, "a user already exists")
             return
         }
-        const availableUsers = [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, id: client.id }))
-        const client = new Client(username, age, socket)
+        const availableUsers = [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, gender: client.gender, id: client.id }))
+        const client = new Client(username, age, gender, socket)
 
         activeClients.set(username, client);
 
+        
 
         socket.send(JSON.stringify(
             {
                 username: client.username,
                 type: "register",
                 age: client.age,
+                gender: client.gender,
                 id: client.id,
 
                 availableUsers: availableUsers
@@ -178,7 +184,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             let data = null
             try {
                 data = await JSON.parse(message);
-             
+                console.log("data ::: ",data)
             } catch (error) {
                 console.error(error)
             }
@@ -333,7 +339,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                             sender: sender,
                             type: type,
                             query: queryType,
-                            msg: [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, id: client.id })).filter((item, _, __) => (item.id !== sender.id))
+                            msg: [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, gender: client.gender, id: client.id })).filter((item, _, __) => (item.id !== sender.id))
                             // msg: await searchAllUsers()
                         })
                     )
