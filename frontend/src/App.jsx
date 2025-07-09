@@ -5,6 +5,8 @@ import ChatsRoute from './routes/ChatsRoute';
 import { Home } from './routes/home'
 import { useEffect, useRef, useState } from "react"
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { userRef as userSchema,chatsRef as chatSchema } from '../src/controllers/userModel.js';
+import { useMemo } from 'react';
 
 
 
@@ -16,14 +18,17 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 
 
 function App() {
+  console.log("app route is called")
 
   const socketContainer = useRef(null)
 
   const [user, setUser] = useState(null)
 
-  const userRef = useRef(null)
+  const userRef = useRef(userSchema)
 
-  const chatRef = useRef(null)
+  const chatRef = useRef(chatSchema)
+
+  const chatsDivRef = useRef(null)
 
 
   const [refreshUsersFlag, setRefreshUsersFlag] = useState(0)
@@ -61,10 +66,10 @@ function App() {
     document.documentElement.style.setProperty('--app-height', `${vh}px`);
     document.documentElement.style.setProperty('--app-width', `${vw}px`);
   }
-  window.addEventListener("resize", () => {
+  window.addEventListener("resize", updateViewportVars)
 
-    updateViewportVars()
-  })
+  window.addEventListener('visualViewport', updateViewportVars);
+
   useEffect(() => {
     updateViewportVars()
   }, [])
@@ -91,6 +96,8 @@ function App() {
           userRef={userRef}
 
           chatRef={chatRef}
+
+          chatsDivRef={chatsDivRef}
 
           setRefreshUsersFlag={setRefreshUsersFlag}
 
@@ -143,6 +150,8 @@ function App() {
               <ChatsRoute
               
               chatRef={chatRef}
+
+              chatsDivRef={chatsDivRef}
               
               socketContainer={socketContainer}
               

@@ -13,30 +13,30 @@ export const ChatSection = (props) => {
     }, [props.refreshChatsFlag])
 
         useLayoutEffect(() => {
-        const chatDiv = document.getElementById("chats-div");
+        const chatDiv = props.chatsDivRef.current//document.getElementById("chats-div");
         chatDiv?.scrollTo({
             top: chatDiv.scrollHeight,
             behavior: "smooth"
         });
     }, [availableChatsInUI]);
 
-    if (!props.chatRef.current || props.chatRef.current.availableChats.length === 0) {
+    // if (!props.chatRef.current || props.chatRef.current.availableChats.length === 0) {
         
-        return (<div id="chats-div" className="" style={{
-            display: "flex", flexDirection: "column", justifyContent: "start", alignItems: "center"
+    //     return (<div id="chats-div" className="" style={{
+    //         display: "flex", flexDirection: "column", justifyContent: "start", alignItems: "center"
 
-        }}>
-            <div className="any-label" style={{
-                borderRadius: "calc(10*var(--med-border-radius))",
-                textAlign: "center"
-            }}>
-                No chats there
-            </div>
-        </div>)
-    }
+    //     }}>
+    //         <div className="any-label" style={{
+    //             borderRadius: "calc(10*var(--med-border-radius))",
+    //             textAlign: "center"
+    //         }}>
+    //             No chats there
+    //         </div>
+    //     </div>)
+    // }
 
-    else {
-        return <div id="chats-div" >
+    // else {
+        return <div id="chats-div" ref={props.chatsDivRef}>
             {
                 availableChatsInUI.map((item, index) => {   //  senderId: data.sender.id, receiverId: data.receiver.id, content: data.msg, createdAt: data.createdAt
                     let originalDate = new Date(item.createdAt)
@@ -81,5 +81,5 @@ export const ChatSection = (props) => {
                 })
             }
         </div>
-    }
+    // }
 }

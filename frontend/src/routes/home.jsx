@@ -8,7 +8,7 @@ import { useRef } from "react";
 
 export function Home(props) {
     // states to update only ui and none
-    const [selectedReceiver, setSelectedReceiver] = useState("")
+    const [selectedReceiver, setSelectedReceiver] = useState({ username: "", gender: "" })
 
     const [headerTitle, setHeaderTitle] = useState("ChatIBM")
 
@@ -45,6 +45,8 @@ export function Home(props) {
         chatRef
     ) => {
 
+        
+
         e.preventDefault()
 
         setSignInLoadingFlag(true)
@@ -53,6 +55,7 @@ export function Home(props) {
         const formData = new FormData(e.currentTarget);
         const username = formData.get("username")
         const age = formData.get("age")
+        const gender = formData.get("gender")
         const label = e.currentTarget.lastElementChild;
 
         //prechecking about correctness of data
@@ -75,7 +78,7 @@ export function Home(props) {
 
 
         try {
-            socketContainer.current = new WebSocket(`${import.meta.env.VITE_BACKEND_WS_URL}/?username=${username}&age=${age}`)
+            socketContainer.current = new WebSocket(`${import.meta.env.VITE_BACKEND_WS_URL}/?username=${username}&age=${age}&gender=${gender}`)
         } catch (error) {
 
             setSignInLoadingFlag(false)
@@ -114,7 +117,20 @@ export function Home(props) {
             }
 
             if (data.type === "register") {
-         
+
+
+                // set here full screen mode 
+                // const elem = document.documentElement;
+                // if (elem.requestFullscreen) {
+                //     elem.requestFullscreen();
+                // } else if (elem.webkitRequestFullscreen) { // Safari
+                //     elem.webkitRequestFullscreen();
+                // } else if (elem.msRequestFullscreen) { // IE11
+                //     elem.msRequestFullscreen();
+                // }
+
+                //
+
 
                 setUser(data.username)
 
@@ -125,6 +141,8 @@ export function Home(props) {
                     username: data.username,
 
                     age: data.age,
+
+                    gender: data.gender,
 
                     id: data.id,
 
@@ -138,7 +156,7 @@ export function Home(props) {
             if (data.type === "query-message") {
 
                 if (data.query === "refresh-all-user") {
-              
+
 
                     userRef.current.availableUsers = data.msg
 
@@ -155,7 +173,8 @@ export function Home(props) {
                     return
                 }
                 if (data.query === "chat-list-demand") {
-             
+
+
 
                     if (data.status === "failed") {
 
@@ -183,7 +202,9 @@ export function Home(props) {
 
                     if (chatRef.current) {
 
-                        setSelectedReceiver(chatRef.current.receiver.username)
+
+                        setSelectedReceiver({ username: chatRef.current.receiver.username, gender: chatRef.current.receiver.gender })
+
 
                         props.setRefreshChatsFlag(prev => prev + 1)
 
@@ -201,7 +222,7 @@ export function Home(props) {
             }
 
             if (data.type === "message") {
-        
+
 
                 if (data.sender.id === userRef.current.id) {
 
@@ -209,7 +230,7 @@ export function Home(props) {
 
                         console.error("your msg has been failed", data.msg)
 
-                        const chatsDiv = document.getElementById("chats-div")
+                        const chatsDiv = props.chatsDivRef.current
 
 
                         const pendingChatFields = chatsDiv.querySelectorAll(".newly-unupdated-chats")
@@ -235,6 +256,7 @@ export function Home(props) {
 
                                 username: data.receiver.username,
                                 age: data.receiver.age,
+                                gender: data.receiver.gender,
                                 id: data.receiver.id,
                                 unread: false
 
@@ -245,7 +267,7 @@ export function Home(props) {
 
 
 
-                    const chatsDiv = document.getElementById("chats-div")
+                    const chatsDiv = props.chatsDivRef.current
 
 
                     const pendingChatFields = chatsDiv.querySelectorAll(".newly-unupdated-chats")
@@ -263,25 +285,22 @@ export function Home(props) {
                     return
                 }
 
-                if (data.sender.id === chatRef.current?.receiver?.id) {
+                if (data.sender.id === chatRef.current.receiver.id) {
                     // THIS IS THE PART WHERE RECEIVER IS FOCUSED
-                    console.log("THIS IS THE PART WHERE RECEIVER IS FOCUSED")
 
                     if (data.status === "failed") {
                         console.error("recieved failed msg by a sender to me")
                         return
                     }
 
-                    // chatRef.current.availableChats.push({
-                    //     senderId: data.sender.id, receiverId: data.receiver.id, content: data.msg, createdAt: data.createdAt
-                    // })
 
 
 
 
 
 
-                    const chatsDiv = document.getElementById("chats-div")
+
+                    const chatsDiv = props.chatsDivRef.current
 
                     const chatField = document.createElement("div")
 
@@ -312,10 +331,11 @@ export function Home(props) {
                 }
 
 
-                if (data.receiver && data.sender.id !== chatRef.current?.receiver?.id) {
+                if (data.receiver && data.sender.id !== chatRef.current.receiver.id) {
+
+
 
                     // THIS IS THE CONDITION WHERE RECEIVER IS NOT FOCUSED BUT MESSAGE CAME FROM HIM
-                    console.log("THIS IS THE CONDITION WHERE ANY RANDOM OR KNOWN RECEIVER IS NOT FOCUSED BUT MESSAGE CAME FROM HIM")
 
 
                     if (data.status === "failed") {
@@ -350,6 +370,7 @@ export function Home(props) {
 
                                 username: data.sender.username,
                                 age: data.sender.age,
+                                gender: data.sender.gender,
                                 id: data.sender.id,
                                 unread: true
 
@@ -413,7 +434,7 @@ export function Home(props) {
             return
         }
         if (e.target.value === "refresh") {
-           
+
 
             if (!props.socketContainer.current || props.socketContainer.current.readyState !== 1) {
 
@@ -438,7 +459,7 @@ export function Home(props) {
         }
         if (e.target.value === "logout") {
 
-           
+
 
             if (!props.socketContainer || props.socketContainer.current.readyState !== 1) {
                 window.location.href = '/';
@@ -458,6 +479,19 @@ export function Home(props) {
 
             // window.location.href = '/';
             navigate("/")
+
+
+
+            // here exit full screen 
+
+            // if (document.exitFullscreen) {
+            //     document.exitFullscreen();
+            // } else if (document.webkitExitFullscreen) { // Safari
+            //     document.webkitExitFullscreen();
+            // } else if (document.msExitFullscreen) { // IE11
+            //     document.msExitFullscreen();
+            // }
+            //
 
 
 
@@ -481,11 +515,11 @@ export function Home(props) {
 
                 >
                     <div
-                        style={{ visibility: (selectedReceiver || headerTitle !== "ChatIBM") ? "visible" : "hidden", backgroundColor: "transparent" }}
+                        style={{ visibility: (selectedReceiver.username || headerTitle !== "ChatIBM") ? "visible" : "hidden", backgroundColor: "transparent" }}
                         onClick={
                             () => {
 
-                                setSelectedReceiver("");
+                                setSelectedReceiver({ username: "", gender: "" });
 
                                 if (props.chatRef.current?.availableChats) { props.chatRef.current.availableChats = [] }
 
@@ -505,16 +539,24 @@ export function Home(props) {
                         </svg>
                     </div>
 
-                    <div style={{
-                        fontFamily: "cursive",
-                        color: "var(--professional-blue)",
-                        fontWeight: "bold",
-                        // fontSize: "18px",
-                        // textDecoration: "underline",
-                        textShadow: "1px 1px 1px var(--dark-black)"
-                    }}
+                    <div
+                        className="profile-photo-and-username-in-header" style={{
+                            fontFamily: "cursive",
+                            color: "var(--professional-blue)",
+                            fontWeight: "bold",
+                            // fontSize: "18px",
+                            // textDecoration: "underline",
+                            textShadow: "1px 1px 1px var(--dark-black)"
+                        }}
 
-                    ><i className={selectedReceiver ? "selected-username-holder" : ""}>{selectedReceiver || headerTitle}</i></div>
+                    >
+                        <div className="profile-photo-in-header" style={{
+                            display: selectedReceiver.username ? "flex" : "none",
+                            backgroundImage: `url(${selectedReceiver.gender === "male" ? "male.jpg" : "female.webp"})`
+                        }}>
+
+                        </div>
+                        <i className={selectedReceiver.username ? "selected-username-holder" : ""}>{selectedReceiver.username || headerTitle}</i></div>
 
 
                     <div className="inbox"
@@ -523,7 +565,7 @@ export function Home(props) {
                         onClick={
                             (e) => {
 
-                                setSelectedReceiver("");
+                                setSelectedReceiver({ username: "", gender: "" });
 
                                 if (props.chatRef.current && props.chatRef.current.availableChats) {
 
@@ -559,7 +601,7 @@ export function Home(props) {
                         }
                         id="controls"
                         className="button"
-                        style={{ visibility: selectedReceiver ? "hidden" : "visible" }}
+                        style={{ display: selectedReceiver.username ? "none" : "flex" }}
 
                     >
                         <div>
@@ -599,7 +641,7 @@ export function Home(props) {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
                                     <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9" />
                                     <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z" />
-                                </svg>Sync users
+                                </svg>Sync
                             </button>
                             <button onClick={
                                 (e) => { e.stopPropagation(); controlUserCallback(e) }
@@ -646,7 +688,7 @@ export function Home(props) {
 
 
                 <section className="signin-box">
-                    <label >Choose Username</label>
+                    <label >Register & Go!</label>
                     <form autoComplete="off" action="" className="inputs" onSubmit={async (e) => {
 
                         await initializeConnection(
@@ -675,7 +717,28 @@ export function Home(props) {
 
                         </fieldset>
 
-                        <input type="submit" spellCheck={false} name="submitbtn" value="Submit" style={{ backgroundColor: "green" }} />
+                        <section>
+
+                            <fieldset onClick={(e)=>(e.currentTarget.children[0].click())}>
+
+                                <input required type="radio" name="gender" value="female" />
+
+                                <legend>Female</legend>
+
+
+                            </fieldset>
+                            <fieldset onClick={(e)=>(e.currentTarget.children[0].click())}>
+
+                                <input required type="radio" name="gender" value="male" />
+
+                                <legend>Male</legend>
+
+                            </fieldset>
+
+                        </section>
+
+
+                        <input type="submit" spellCheck={false} name="submitbtn" value="Go" style={{ backgroundColor: "green" }} />
 
                         <label
                             style={
@@ -695,6 +758,17 @@ export function Home(props) {
 
                     </form>
                 </section>
+
+
+                <div className="container-sign-in-overlay">
+                   <section></section>
+                   <section></section>
+                   <section></section>
+                   <section></section>
+                   <section></section>
+
+                  
+                </div>
             </div>
         )
 

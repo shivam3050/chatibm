@@ -19,7 +19,7 @@ useEffect(()=>{
 
     return (
         <aside className="user-vs-chat-container" >
-            <ChatSection userRef={props.userRef} chatRef={props.chatRef} refreshChatsFlag={props.refreshChatsFlag} />
+            <ChatSection userRef={props.userRef} chatRef={props.chatRef} refreshChatsFlag={props.refreshChatsFlag} chatsDivRef={props.chatsDivRef} />
             <form className="formCreateChat" action="" method="post"
                 onSubmit={(e) => {
 
@@ -36,7 +36,7 @@ useEffect(()=>{
 
                     const createdAt = date.toDateString()
 
-                    const chatsDiv = document.getElementById("chats-div")
+                    const chatsDiv = props.chatsDivRef.current
 
                     const chatField = document.createElement("div")
 
@@ -72,7 +72,7 @@ useEffect(()=>{
                                 message: message,
                                 createdAt: createdAt,
                                 receiver: props.chatRef.current.receiver,
-                                sender: { username: props.userRef.current.username, id: props.userRef.current.id ,age: props.userRef.current.age }
+                                sender: { username: props.userRef.current.username, id: props.userRef.current.id ,age: props.userRef.current.age, gender: props.userRef.current.gender }
                             }
                         )
                     )
