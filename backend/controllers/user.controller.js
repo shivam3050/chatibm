@@ -305,6 +305,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                     const client = activeClients.get(receiver.username)
 
                     if (!client || client.id !== receiver.id) {
+                        // console.log(`${client}  ${client.id}  ${receiver.id}`)
 
                         socket.send(
                             JSON.stringify({
