@@ -9,7 +9,8 @@ export const userRef = {
             username: "",
             id: "",
             age: null,
-            gender: ""
+            gender: "",
+            unread: false
         }
     ],
     availableUsers: [

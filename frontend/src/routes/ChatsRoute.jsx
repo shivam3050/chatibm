@@ -4,15 +4,42 @@ import { ChatSection } from './chat';
 
 function ChatsRoute(props) {
 
+
     const [selectedReceiver, setSelectedReceiver] = useState("")
 
-useEffect(()=>{
-    if(props.chatRef.current?.receiver?.username){
+    useEffect(() => {
+        if (props.userRef.current.focusedContact.username) {
 
-        setSelectedReceiver(props.chatRef.current.receiver.username)
+            setSelectedReceiver(props.userRef.current.focusedContact.username)
 
+        }
+    }, [props.refreshChatsFlag])
+
+    let scrollHandler = null;
+    let lastScrollTop = 0;
+
+    function enableTextBoxOnBlur(e) {
+        const inputEl = e.currentTarget;
+        lastScrollTop = window.scrollY || document.documentElement.scrollTop;
+
+        scrollHandler = () => {
+            const st = window.scrollY || document.documentElement.scrollTop;
+
+            if (st < lastScrollTop) {
+                inputEl.blur();
+
+                // ✅ Remove listener immediately after blur
+                window.removeEventListener("scroll", scrollHandler);
+                scrollHandler = null;
+            }
+
+            lastScrollTop = Math.max(st, 0);
+        };
+
+        window.addEventListener("scroll", scrollHandler, { passive: true });
     }
-},[props.refreshChatsFlag])
+
+
 
 
 
@@ -33,14 +60,22 @@ useEffect(()=>{
                     }
 
                     const date = new Date()
+                    const timestamp = date.getTime()
 
-                    const createdAt = date.toDateString()
+
+
+
+                    const localTimeOnly = date.toLocaleTimeString("en-IN", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                    });
 
                     const chatsDiv = props.chatsDivRef.current
 
                     const chatField = document.createElement("div")
 
-                    if(props.userRef.current.id!==props.chatRef.current.receiver){
+                    if (props.userRef.current.id !== props.userRef.current.focusedContact.id) {
                         chatField.style.alignSelf = "flex-end"
                     }
                     else {
@@ -55,24 +90,27 @@ useEffect(()=>{
 
                     chatTextField.textContent = message
 
-                    chatStatusField.textContent = `${createdAt}`
+                    chatStatusField.textContent = `${localTimeOnly}`
 
                     chatField.appendChild(chatTextField)
 
                     chatField.appendChild(chatStatusField)
 
+                    chatField.classList.add("bakground-gradient-in-chat")
+
                     chatsDiv.appendChild(chatField)
 
                     chatsDiv?.scrollTo({ top: chatsDiv?.scrollHeight, behavior: 'smooth' })
+
 
                     props.socketContainer.current.send(
                         JSON.stringify(
                             {
                                 type: "message",
                                 message: message,
-                                createdAt: createdAt,
-                                receiver: props.chatRef.current.receiver,
-                                sender: { username: props.userRef.current.username, id: props.userRef.current.id ,age: props.userRef.current.age, gender: props.userRef.current.gender }
+                                createdAt: timestamp,
+                                receiver: props.userRef.current.focusedContact,
+                                sender: { username: props.userRef.current.username, id: props.userRef.current.id, age: props.userRef.current.age, gender: props.userRef.current.gender }
                             }
                         )
                     )
@@ -87,14 +125,8 @@ useEffect(()=>{
 
                         spellCheck="false"
 
-                        onFocus={(e) => {
+                        onFocus={(e) => { enableTextBoxOnBlur(e) }}
 
-                            // props.updateViewportVars()
-                        }}
-                        onBlur={(e) => {
-
-                            // props.updateViewportVars()
-                        }}
 
                         style={{ resize: "none" }} placeholder={`Send to ${selectedReceiver}...`} name="message" maxLength="500">
 
@@ -111,21 +143,21 @@ useEffect(()=>{
 
 
 
-            <div className="chats-overlay" 
+            <div className="chats-overlay"
                 style={
                     {
-                        display: props.chatsOverlay?"flex":"none",
+                        display: props.chatsOverlay ? "flex" : "none",
                         justifyContent: "center",
                         alignItems: "center",
-                        position:"absolute",
-                        height:"100%",
-                        width:"100%",
-                        backgroundColor:"var(--chats-overlay-color)",
-                        color:"rgba(255,0,0,0.6)",
-                        fontSize:"20px",
-                        fontWeight:"bold",
-                        textShadow:"2px 2px 2px var(--dark-black)"
-                        
+                        position: "absolute",
+                        height: "100%",
+                        width: "100%",
+                        backgroundColor: "var(--chats-overlay-color)",
+                        color: "rgba(255,0,0,0.6)",
+                        fontSize: "20px",
+                        fontWeight: "bold",
+                        textShadow: "2px 2px 2px var(--dark-black)"
+
                     }
                 }
             >

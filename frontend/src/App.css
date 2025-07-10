@@ -110,24 +110,24 @@
 
 @supports (height: 100dvh) {
 
-    :root{
+    :root {
         --app-height: 100dvh;
     }
 
     :root::after {
 
-    
-   
-    content: "Hovered";
-    position: relative;
-    left: 50%;
-    text-align: center;
-    color: white;
-    text-shadow: -2px 2px 1px white;
-    font-size: 20px;
-    font-family: cursive;
 
-}
+
+        content: "Hovered";
+        position: relative;
+        left: 50%;
+        text-align: center;
+        color: white;
+        text-shadow: -2px 2px 1px white;
+        font-size: 20px;
+        font-family: cursive;
+
+    }
 }
 
 body {
@@ -439,14 +439,15 @@ input[type="password"]:focus {
 
 .svg-container-inbox-icon::after {
     content: "";
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
+    border: 1px solid rgb(125, 0, 0) ;
     aspect-ratio: 1/1;
     background-color: red;
     border-radius: 50%;
     position: absolute;
-    top: 55%;
-    right: 30%;
+    top:25%;
+    right: 22%;
 
 
 }
@@ -534,7 +535,8 @@ input[type="password"]:focus {
     position: relative;
     display: flex;
     flex-direction: column;
-    margin-top: calc(var(--nav-height));;
+    margin-top: calc(var(--nav-height));
+    ;
     height: calc(100% - var(--nav-height));
 
 
@@ -655,12 +657,12 @@ input[type="password"]:focus {
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
-
+    cursor: auto;
     padding: var(--max-padding);
     background-color: transparent;
     row-gap: var(--max-margin);
     border-top: calc(2*var(--border-size)) inset var(--border-color);
-
+    z-index: 10;
 
 
 
@@ -703,12 +705,19 @@ input[type="password"]:focus {
     border: 1px solid var(--dark-black);
     box-shadow: 0px 0px 1px 0px var(--dark-black);
     background-color: var(--light-grey);
-    /* background: transparent;
-    -webkit-backdrop-filter: blur(2px) brightness(140%);
+    /* background: transparent;  */
+    /* -webkit-backdrop-filter: blur(2px) brightness(140%);
     backdrop-filter: blur(2px) brightness(140%); */
 
 
 
+
+}
+
+.bakground-gradient-in-chat {
+    background: linear-gradient(to bottom, #9f4fac, #676bf1);
+    background-attachment: fixed;
+    background-size: auto calc(100% - var(--offset-for-keyboard));
 
 }
 
@@ -725,6 +734,7 @@ input[type="password"]:focus {
     font-size: var(--mini-font-size);
     display: flex;
     justify-content: end;
+    font-family: '"Segoe UI", "Helvetica Neue", Helvetica, "Lucida Grande", Arial, Ubuntu, Cantarell, "Fira Sans", sans-serif';
 
 }
 
@@ -825,8 +835,8 @@ input[type="password"]:focus {
     z-index: 1;
 }
 
-.container-sign-in-overlay{
-/* this is signin background bubbles overlay */
+.container-sign-in-overlay {
+    /* this is signin background bubbles overlay */
     height: 100%;
     width: 100%;
     position: absolute;
@@ -836,66 +846,70 @@ input[type="password"]:focus {
     display: flex;
     flex-wrap: wrap;
 }
+
 @keyframes falling {
     0% {
-        transform: translateY(-150px);
+        transform: translateY(calc(-1*var(--app-height)));
     }
+
     100% {
-        transform: translateY(calc(100vh + 150px));
+        transform: translateY(calc(2*var(--app-height)));
     }
-    
+
 }
-.container-sign-in-overlay>*{
+
+.container-sign-in-overlay>* {
 
 
-    animation: falling 40s linear infinite;
+    animation: falling 10s ease-out infinite;
     margin: var(--max-margin);
+    position: relative;
+    top: calc(-180px - 100vh);
+
 }
-.container-sign-in-overlay>:nth-child(1){
+
+.container-sign-in-overlay>:nth-child(1) {
     width: 90px;
     height: 90px;
     border-radius: 50%;
     background: transparent;
-    filter: blur(8px);
-    box-shadow: 5px 5px 10px 0px black ;
+    filter: blur(9px);
+    box-shadow: 5px 5px 10px 0px black;
     animation-delay: 0s;
 }
-.container-sign-in-overlay>:nth-child(2){
+
+.container-sign-in-overlay>:nth-child(2) {
     width: 140px;
     height: 140px;
     border-radius: 50%;
     background: transparent;
-    filter: blur(8px);
-    box-shadow: 5px 5px 10px 0px black ;
+    filter: blur(5px);
+    box-shadow: 5px 5px 10px 0px black;
     animation-delay: 1s;
 }
-.container-sign-in-overlay>:nth-child(3){
+
+.container-sign-in-overlay>:nth-child(3) {
     width: 120px;
     height: 120px;
     border-radius: 50%;
     background: transparent;
-    filter: blur(8px);
-    box-shadow: 5px 5px 10px 0px black ;
-    animation-delay: 3s;
+    filter: blur(7px);
+    box-shadow: 5px 5px 10px 0px black;
+    animation-delay: 10s;
 }
-.container-sign-in-overlay>:nth-child(4){
+
+.container-sign-in-overlay>:nth-child(4) {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     background: transparent;
     filter: blur(8px);
-    box-shadow: 5px 5px 10px 0px black ;
-    animation-delay: 1s;
+    box-shadow: 5px 5px 10px 0px black;
+    animation-delay: 5s;
 }
-.container-sign-in-overlay>:nth-child(4){
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: transparent;
-    filter: blur(8px);
-    box-shadow: 5px 5px 10px 0px black ;
-    animation-delay: 1s;
-}
+
+
+
 
 
 
@@ -907,7 +921,7 @@ input[type="password"]:focus {
     justify-content: center;
     flex-direction: column;
     height: max-content;
-        background: transparent;
+    background: transparent;
     filter: blur(0px);
 }
 
@@ -925,7 +939,7 @@ input[type="password"]:focus {
     color: white;
     font-weight: 900;
     font-size: 1.3em;
-    font-family: 'Brush Script MT','cursive', 'monospace';
+    font-family: 'Brush Script MT', 'cursive', 'monospace';
     filter: drop-shadow(0px 0px 5px var(--dark-black));
 }
 
@@ -952,7 +966,7 @@ input[type="password"]:focus {
 }
 
 .signin-box> :nth-child(2)> :nth-last-child(2) {
-    font-family: 'Brush Script MT','cursive', 'monospace';
+    font-family: 'Brush Script MT', 'cursive', 'monospace';
     font-weight: 900;
     font-size: 1.2em;
 }

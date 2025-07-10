@@ -7,6 +7,7 @@ export const UserSection = (props) => {
 
 
 
+
     const [updateAvailableUsersInUI, setUpdateAvailableUsersInUI] = useState([])
 
     useEffect(() => {
@@ -40,6 +41,8 @@ export const UserSection = (props) => {
                     <div
                         onClick={
                             async () => {
+
+                                
 
                                 if (!props.socketContainer?.current || props.socketContainer.current.readyState !== 1) {
                                     return console.error("socket is not ready")

@@ -23,7 +23,7 @@ connectDB().then((dbname) => {
 
     const port = process.env.PORT
     server.listen(port, () => {
-        console.log(`Server listening on ${port}`);
+        console.log(`Server listening...`);
     });
     newConnectionHandler(dbname, server, allowedOrigin)
 })

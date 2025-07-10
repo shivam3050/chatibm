@@ -66,6 +66,7 @@ function App() {
     document.documentElement.style.setProperty('--app-height', `${vh}px`);
     document.documentElement.style.setProperty('--app-width', `${vw}px`);
   }
+
   window.addEventListener("resize", updateViewportVars)
 
   window.addEventListener('visualViewport', updateViewportVars);

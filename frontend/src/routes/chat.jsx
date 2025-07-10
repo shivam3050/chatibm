@@ -4,6 +4,8 @@ import { useEffect } from "react";
 
 export const ChatSection = (props) => {
 
+    
+
     const [availableChatsInUI, setAvailableChatsInUI] = useState([])
 
     useEffect(() => {
@@ -39,26 +41,20 @@ export const ChatSection = (props) => {
         return <div id="chats-div" ref={props.chatsDivRef}>
             {
                 availableChatsInUI.map((item, index) => {   //  senderId: data.sender.id, receiverId: data.receiver.id, content: data.msg, createdAt: data.createdAt
-                    let originalDate = new Date(item.createdAt)
-                    let timeDiff = new Date() - originalDate; // in milliseconds  
-                    let timeText;
-
-
-                    if (timeDiff < 60 * 1000) {
-                        // timeText = `${Math.floor(timeDiff / 1000)} seconds`;
-                        timeText = originalDate.toLocaleTimeString();
-                    } else if (timeDiff < 60 * 60 * 1000) {
-                        // timeText = `${Math.floor(timeDiff / (60 * 1000))} minutes`;
-                        timeText = originalDate.toLocaleTimeString();
-                    } else if (timeDiff < 24 * 60 * 60 * 1000) {
-                        // timeText = `${Math.floor(timeDiff / (60 * 60 * 1000))} hours`;
-                        timeText = originalDate.toLocaleTimeString();
-                    } else {
-                        timeText = originalDate;
-                    }
+                    const originalTimestamp = new Date(item.createdAt)
+                    const createdAt = originalTimestamp.toLocaleTimeString(
+                        "en", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12 :true
+                        }
+                    )
 
                     return (
-                        <div style={
+                        <div
+                        
+                            className={(item.senderId === props.userRef.current.id) ? "bakground-gradient-in-chat" : ""} 
+                        style={
                             {
 
                                 alignSelf: (item.senderId === props.userRef.current.id) ? ("flex-end") : ("flex-start")
@@ -73,7 +69,7 @@ export const ChatSection = (props) => {
 
                             <div className="chatTextStatus">
 
-                                {(item.senderId === props.userRef.current.id) ? (`✔ ${timeText}`) : (timeText)}
+                                {(item.senderId === props.userRef.current.id) ? (`✔ ${createdAt}`) : (createdAt)}
                             </div>
 
                         </div>

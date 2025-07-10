@@ -8,7 +8,7 @@ import { useRef } from "react";
 
 export function Home(props) {
     // states to update only ui and none
-    const [selectedReceiver, setSelectedReceiver] = useState({ username: "", gender: "" })
+    const [selectedReceiver, setSelectedReceiver] = useState({ username: "", gender: "", age: null, id: "" })
 
     const [headerTitle, setHeaderTitle] = useState("ChatIBM")
 
@@ -45,7 +45,7 @@ export function Home(props) {
         chatRef
     ) => {
 
-        
+
 
         e.preventDefault()
 
@@ -89,7 +89,6 @@ export function Home(props) {
 
         socketContainer.current.onopen = () => {
 
-            console.log("socket is ready to connect")
         }
 
         socketContainer.current.onclose = (event) => {
@@ -132,7 +131,7 @@ export function Home(props) {
                 //
 
 
-                setUser(data.username)
+
 
                 // here is the structure
 
@@ -150,6 +149,10 @@ export function Home(props) {
 
                     availableConnectedUsers: []
                 }
+
+
+
+                setUser(data.username)
                 return
             }
 
@@ -158,7 +161,7 @@ export function Home(props) {
                 if (data.query === "refresh-all-user") {
 
 
-                    userRef.current.availableUsers = data.msg
+                    userRef.current.availableUsers = data.msg || []
 
                     if (userRef.current.availableUsers) {
 
@@ -174,11 +177,32 @@ export function Home(props) {
                 }
                 if (data.query === "chat-list-demand") {
 
+                    if (data.sender.id !== userRef.current.id) {
+                        //this is not for me  which i have queried when click on a user
+                        console.error("query respose is not for me")
+                        return
+                    }
+
+
+
+
+
+
+
+
 
 
                     if (data.status === "failed") {
 
                         props.setChatsOverlay(true)
+
+                        userRef.current.focusedContact = {}
+
+                        chatRef.current.sender = data.sender;
+
+                        chatRef.current.receiver = data.receiver;
+
+                        chatRef.current.availableChats = []
 
                         navigate("/chats")
 
@@ -186,34 +210,40 @@ export function Home(props) {
 
                         return
                     }
+
+
                     //below is for success
 
                     // here is the structure
 
-                    chatRef.current = {
+                    userRef.current.focusedContact = data.receiver
 
-                        sender: data.sender,
+                    setSelectedReceiver(userRef.current.focusedContact)
 
-                        receiver: data.receiver,
+                    chatRef.current.availableChats = []
 
-                        availableChats: data.msg
+                    chatRef.current.sender = data.sender;
+
+                    chatRef.current.receiver = data.receiver;
+
+
+                    if (data.msg.length) {
+
+                        chatRef.current.availableChats = data.msg
 
                     }
 
-                    if (chatRef.current) {
 
 
-                        setSelectedReceiver({ username: chatRef.current.receiver.username, gender: chatRef.current.receiver.gender })
+
+                    setSelectedReceiver(userRef.current.focusedContact)
 
 
-                        props.setRefreshChatsFlag(prev => prev + 1)
+                    props.setRefreshChatsFlag(prev => prev + 1)
 
-                        navigate("/chats")
+                    navigate("/chats")
 
-                        userRef.current.availableUsers.unread = false
-
-                        return
-                    }
+                    // userRef.current.availableUsers.unread = false
 
                     return
                 }
@@ -274,7 +304,16 @@ export function Home(props) {
 
                     for (let i = 0; i < pendingChatFields.length; i++) {
 
-                        pendingChatFields[i].children[1].textContent = `✔ ${data.createdAt}`
+                        const date = new Date(data.createdAt)
+
+                        const createdAt = date.toLocaleTimeString("en-IN", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                        });
+
+
+                        pendingChatFields[i].children[1].textContent = `✔ ${createdAt}`
 
                         pendingChatFields[i].classList.remove("newly-unupdated-chats")
 
@@ -285,8 +324,8 @@ export function Home(props) {
                     return
                 }
 
-                if (data.sender.id === chatRef.current.receiver.id) {
-                    // THIS IS THE PART WHERE RECEIVER IS FOCUSED
+                if (data.sender.id === userRef.current.focusedContact?.id) {
+                    // THIS IS THE PART WHERE RECEIVER IS FOCUSED AND MSG CAME FROM HIM
 
                     if (data.status === "failed") {
                         console.error("recieved failed msg by a sender to me")
@@ -295,7 +334,13 @@ export function Home(props) {
 
 
 
+                    const date = new Date(data.createdAt)
 
+                    const createdAt = date.toLocaleTimeString("en-IN", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                    });
 
 
 
@@ -312,7 +357,7 @@ export function Home(props) {
 
                     chatTextField.textContent = data.msg
 
-                    chatStatusField.textContent = `${data.createdAt}`
+                    chatStatusField.textContent = createdAt
 
                     chatField.appendChild(chatTextField)
 
@@ -331,7 +376,7 @@ export function Home(props) {
                 }
 
 
-                if (data.receiver && data.sender.id !== chatRef.current.receiver.id) {
+                if (data.receiver && data.sender.id !== userRef.current.focusedContact?.id) {
 
 
 
@@ -389,8 +434,8 @@ export function Home(props) {
 
 
 
-
                     if (!inboxIconRef.current.classList.contains("svg-container-inbox-icon")) {
+
 
                         inboxIconRef.current.classList.add("svg-container-inbox-icon")
 
@@ -504,6 +549,17 @@ export function Home(props) {
     }
 
 
+// let lastScrollY = window.scrollY;
+
+// window.addEventListener("scroll", () => {
+//   const currentScrollY = window.scrollY;
+
+//   if (currentScrollY < lastScrollY) {
+//     console.log("scrolled up");
+//   }
+
+//   lastScrollY = currentScrollY;
+// });
 
 
     return (
@@ -521,10 +577,23 @@ export function Home(props) {
 
                                 setSelectedReceiver({ username: "", gender: "" });
 
-                                if (props.chatRef.current?.availableChats) { props.chatRef.current.availableChats = [] }
+                                if (props.chatRef.current.availableChats) { props.chatRef.current.availableChats = [] }
 
-                                if (props.chatRef.current?.receiver) {
-                                    props.chatRef.current.receiver = ""
+                                if (props.chatRef.current.receiver) {
+                                    props.chatRef.current.receiver = {
+                                        username: "",
+                                        id: "",
+                                        age: null,
+                                        gender: "",
+                                    }
+                                    props.userRef.current.focusedContact = {
+
+                                        username: "",
+                                        id: "",
+                                        age: null,
+                                        gender: ""
+
+                                    }
                                 }
 
                                 navigate("/users")
@@ -565,12 +634,12 @@ export function Home(props) {
                         onClick={
                             (e) => {
 
-                                setSelectedReceiver({ username: "", gender: "" });
+                                setSelectedReceiver({ username: "", gender: "", age: null, id: "" });
 
-                                if (props.chatRef.current && props.chatRef.current.availableChats) {
-
-                                    props.chatRef.current.availableChats = []
-                                }
+                                // if (props.chatRef.current && props.chatRef.current.availableChats) {
+                                props.userRef.current.focusedContact = {}
+                                props.chatRef.current.availableChats = []
+                                // }
 
                                 navigate("/mycontacts-and-notifications")
                                 props.setRefreshGlobalUsersFlag((prev) => (prev + 1))
@@ -582,8 +651,9 @@ export function Home(props) {
                         }
                     >
 
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
-                            <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" />
+                        <svg viewBox="0 0 24 24" height="24" width="24" preserveAspectRatio="xMidYMid meet" class="" fill="none">
+
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M22.0002 6.66667C22.0002 5.19391 20.8062 4 19.3335 4H1.79015C1.01286 4 0.540213 4.86348 0.940127 5.53L3.00016 9V17.3333C3.00016 18.8061 4.19406 20 5.66682 20H19.3335C20.8062 20 22.0002 18.8061 22.0002 17.3333V6.66667ZM7.00016 10C7.00016 9.44772 7.44787 9 8.00016 9H17.0002C17.5524 9 18.0002 9.44772 18.0002 10C18.0002 10.5523 17.5524 11 17.0002 11H8.00016C7.44787 11 7.00016 10.5523 7.00016 10ZM8.00016 13C7.44787 13 7.00016 13.4477 7.00016 14C7.00016 14.5523 7.44787 15 8.00016 15H14.0002C14.5524 15 15.0002 14.5523 15.0002 14C15.0002 13.4477 14.5524 13 14.0002 13H8.00016Z" fill="currentColor"></path>
                         </svg>
 
                     </div>
@@ -605,8 +675,9 @@ export function Home(props) {
 
                     >
                         <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="white" class="bi bi-list" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+                            <svg viewBox="0 0 24 24" height="24" width="24" preserveAspectRatio="xMidYMid meet" class="" fill="none">
+
+                                <path d="M12 20C11.45 20 10.9792 19.8042 10.5875 19.4125C10.1958 19.0208 10 18.55 10 18C10 17.45 10.1958 16.9792 10.5875 16.5875C10.9792 16.1958 11.45 16 12 16C12.55 16 13.0208 16.1958 13.4125 16.5875C13.8042 16.9792 14 17.45 14 18C14 18.55 13.8042 19.0208 13.4125 19.4125C13.0208 19.8042 12.55 20 12 20ZM12 14C11.45 14 10.9792 13.8042 10.5875 13.4125C10.1958 13.0208 10 12.55 10 12C10 11.45 10.1958 10.9792 10.5875 10.5875C10.9792 10.1958 11.45 10 12 10C12.55 10 13.0208 10.1958 13.4125 10.5875C13.8042 10.9792 14 11.45 14 12C14 12.55 13.8042 13.0208 13.4125 13.4125C13.0208 13.8042 12.55 14 12 14ZM12 8C11.45 8 10.9792 7.80417 10.5875 7.4125C10.1958 7.02083 10 6.55 10 6C10 5.45 10.1958 4.97917 10.5875 4.5875C10.9792 4.19583 11.45 4 12 4C12.55 4 13.0208 4.19583 13.4125 4.5875C13.8042 4.97917 14 5.45 14 6C14 6.55 13.8042 7.02083 13.4125 7.4125C13.0208 7.80417 12.55 8 12 8Z" fill="currentColor"></path>
                             </svg>
                         </div>
 
@@ -719,7 +790,7 @@ export function Home(props) {
 
                         <section>
 
-                            <fieldset onClick={(e)=>(e.currentTarget.children[0].click())}>
+                            <fieldset onClick={(e) => (e.currentTarget.children[0].click())}>
 
                                 <input required type="radio" name="gender" value="female" />
 
@@ -727,7 +798,7 @@ export function Home(props) {
 
 
                             </fieldset>
-                            <fieldset onClick={(e)=>(e.currentTarget.children[0].click())}>
+                            <fieldset onClick={(e) => (e.currentTarget.children[0].click())}>
 
                                 <input required type="radio" name="gender" value="male" />
 
@@ -761,13 +832,14 @@ export function Home(props) {
 
 
                 <div className="container-sign-in-overlay">
-                   <section></section>
-                   <section></section>
-                   <section></section>
-                   <section></section>
-                   <section></section>
 
-                  
+                    <section></section>
+                    <section></section>
+                    <section></section>
+                    <section></section>
+                    <section></section>
+
+
                 </div>
             </div>
         )

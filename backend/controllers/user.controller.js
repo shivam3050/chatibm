@@ -5,13 +5,13 @@ import { parse } from "url"
 
 export const createNewOneChat = async (senderId, receiverId, message, createdAt) => {
     try {
-        const user = await Message.create({
+        const message = await Message.create({
             senderId: senderId,
             receiverId: receiverId,
             content: message,
             createdAt: createdAt
         })
-        return user
+        return message
     } catch {
 
         return null
@@ -37,7 +37,7 @@ export const getChatList = async (senderId, receiverId) => {
 
         return messages
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return null
     }
 }
@@ -118,7 +118,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                     if (!(origin === allowedOrigin[i])) {
                         continue;
                     } else {
-                        console.log(origin)
+                        // console.log(origin)
                         done(true);
                         allowed = true
                         break
@@ -127,7 +127,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
 
                 }
                 if (!allowed) {
-                    console.log('Connection rejected from origin:', origin);
+                    // console.log('Connection rejected from origin:', origin);
                     done(false, 403, 'Forbidden');
                 }
 
@@ -184,7 +184,6 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             let data = null
             try {
                 data = await JSON.parse(message);
-                console.log("data ::: ",data)
             } catch (error) {
                 console.error(error)
             }
@@ -305,8 +304,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                     const client = activeClients.get(receiver.username)
 
                     if (!client || client.id !== receiver.id) {
-                        // console.log(`${client}  ${client.id}  ${receiver.id}`)
-
+                        console.error("client id old not matched recievr id new")
                         socket.send(
                             JSON.stringify({
                                 status: "failed",
@@ -320,6 +318,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
 
                         return
                     }
+
 
                     socket.send(
                         JSON.stringify({

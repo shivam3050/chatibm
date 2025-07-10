@@ -14,7 +14,7 @@ const messageSchema = new Schema({
     required: true
   },
   createdAt: {
-    type: String,
+    type: Number,
     required: true
   }
 },
