@@ -61,11 +61,11 @@ export const ChatSection = (props) => {
                             }
                         } key={index}>
 
-                            <pre className="main-chat-text">
+                            <p className="main-chat-text pre">
 
                                 {item.content}
 
-                            </pre>
+                            </p>
 
                             <div className="chatTextStatus">
 

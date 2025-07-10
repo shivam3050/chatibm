@@ -112,6 +112,7 @@
 
     :root {
         --app-height: 100dvh;
+        
     }
 
     :root::after {
@@ -127,6 +128,9 @@
         font-size: 20px;
         font-family: cursive;
 
+    }
+    #root{
+        --offset-for-keyboard: 110px
     }
 }
 
@@ -155,17 +159,8 @@ body {
 }
 
 
-div,
-pre {
-    cursor: default;
-
+div{
     -webkit-tap-highlight-color: transparent;
-    font-family: monospace;
-}
-
-
-svg {
-    /* text-shadow: 1px 1px 1px var(--dark-black); */
 }
 
 svg:active {
@@ -205,6 +200,10 @@ textarea {
     padding: var(--max-padding);
     /* margin: var(--max-margin); */
     background-color: var(--light-black);
+    word-spacing: calc(0.2*var(--min-line-height));
+    letter-spacing: calc(0.1*var(--min-line-height));
+    /* line-height: calc(1.2*var(--min-line-height)); */
+    font-size: var(--med-font-size);
     outline: none;
     border: none;
 
@@ -403,11 +402,10 @@ input[type="password"]:focus {
     /* this is profile photo in header username */
     /* border: var(--border-size) inset rgb(50, 46, 46); */
     box-shadow: inset 0px 1px 2px 3px var(--extra-light-grey);
-    height: calc(var(--nav-height) - var(--med-padding));
-    width: calc(var(--nav-height) - var(--med-padding));
+    height: calc(0.8*var(--nav-height) - var(--med-padding));
+    width: calc(0.8*var(--nav-height) - var(--med-padding));
     aspect-ratio: 1/1;
     border-radius: 50%;
-    /* background: url("female.webp"); */
     background-color: white;
     background-size: contain;
     background-repeat: no-repeat;
@@ -611,8 +609,8 @@ input[type="password"]:focus {
 .users-container>*> :nth-child(1) {
     /* this is proflie photo container */
     border: var(--border-size) inset white;
-    height: calc(var(--nav-height) * 1.15 - var(--med-padding));
-    width: calc(var(--nav-height) * 1.15 - var(--med-padding));
+    height: calc(0.8*var(--nav-height) * 1.15 - var(--med-padding));
+    width: calc(0.8*var(--nav-height) * 1.15 - var(--med-padding));
     aspect-ratio: 1/1;
     border-radius: 50%;
     background: url("female.webp");
@@ -634,10 +632,6 @@ input[type="password"]:focus {
 }
 
 
-.user-vs-chat-container {
-    background-size: 300px 400px;
-    background-repeat: repeat;
-}
 
 .user-vs-chat-container::before {
     content: "";
@@ -650,10 +644,9 @@ input[type="password"]:focus {
 }
 
 .user-vs-chat-container> :nth-child(1) {
-    /*  */
+    
     /* chatcssection */
     height: calc(100% - var(--offset-for-keyboard));
-    /* height: calc(100% - var(--nav-height) - var(--offset-for-keyboard)); */
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
@@ -661,7 +654,6 @@ input[type="password"]:focus {
     padding: var(--max-padding);
     background-color: transparent;
     row-gap: var(--max-margin);
-    border-top: calc(2*var(--border-size)) inset var(--border-color);
     z-index: 10;
 
 
@@ -676,6 +668,7 @@ input[type="password"]:focus {
     align-items: start;
     justify-content: center;
     padding-inline: var(--max-padding);
+    padding-block: var(--min-padding);
     column-gap: var(--med-margin);
     position: relative;
     /* bottom: 0; */
@@ -723,8 +716,18 @@ input[type="password"]:focus {
 
 .user-vs-chat-container> :nth-child(1)>*> :nth-child(1) {
     /* this is pointing to chats actual content */
+
+    cursor: default;
+
+    -webkit-tap-highlight-color: transparent;
+    font-family: '"Segoe UI", "Helvetica Neue", Helvetica, "Lucida Grande", Arial, Ubuntu, Cantarell, "Fira Sans", sans-serif';
+
     word-break: break-all;
-    line-height: var(--min-line-height);
+    white-space: pre-wrap; 
+    
+    word-spacing: calc(0.1*var(--min-line-height));
+    letter-spacing: calc(0.1*var(--min-line-height));
+    line-height: calc(1.2*var(--max-line-height));
     font-size: var(--med-font-size);
 }
 
@@ -758,6 +761,7 @@ input[type="password"]:focus {
     justify-content: center;
     align-items: center;
     width: calc(1.5*var(--nav-height));
+    height: calc(1.5*var(--nav-height));
     aspect-ratio: 1/1;
 
 
@@ -768,9 +772,9 @@ input[type="password"]:focus {
 
     width: 100%;
     height: 100%;
-    border: calc(15*var(--border-size)) solid var(--dark-grey);
+    border: calc(5*var(--border-size)) solid var(--dark-grey);
     border-radius: calc(2*var(--large-border-radius));
-    box-shadow: 0px 0px 1px 1px var(--dark-black);
+    box-shadow: 0px 0px 0px 1px black;
     background-color: var(--dark-grey);
 
 
@@ -844,10 +848,10 @@ input[type="password"]:focus {
     background: var(--darkest-black-user);
     overflow: hidden;
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
 }
 
-@keyframes falling {
+/* @keyframes falling {
     0% {
         transform: translateY(calc(-1*var(--app-height)));
     }
@@ -856,7 +860,7 @@ input[type="password"]:focus {
         transform: translateY(calc(2*var(--app-height)));
     }
 
-}
+} */
 
 .container-sign-in-overlay>* {
 
@@ -864,47 +868,35 @@ input[type="password"]:focus {
     animation: falling 10s ease-out infinite;
     margin: var(--max-margin);
     position: relative;
-    top: calc(-180px - 100vh);
-
-}
-
-.container-sign-in-overlay>:nth-child(1) {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: transparent;
-    filter: blur(9px);
-    box-shadow: 5px 5px 10px 0px black;
-    animation-delay: 0s;
-}
-
-.container-sign-in-overlay>:nth-child(2) {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    background: transparent;
-    filter: blur(5px);
-    box-shadow: 5px 5px 10px 0px black;
-    animation-delay: 1s;
-}
-
-.container-sign-in-overlay>:nth-child(3) {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: transparent;
-    filter: blur(7px);
-    box-shadow: 5px 5px 10px 0px black;
-    animation-delay: 10s;
-}
-
-.container-sign-in-overlay>:nth-child(4) {
-    width: 100px;
-    height: 100px;
+    width: calc(100vw / 4);
+    height: calc(100vw / 4);
+    aspect-ratio: 1/1;
     border-radius: 50%;
     background: transparent;
     filter: blur(8px);
     box-shadow: 5px 5px 10px 0px black;
+    /* top: calc(-200px); */
+    /* bottom: calc(-200px); */
+
+}
+
+.container-sign-in-overlay>:nth-child(1) {
+
+    animation-delay: 0s;
+}
+
+.container-sign-in-overlay>:nth-child(2) {
+
+    animation-delay: 1s;
+}
+
+.container-sign-in-overlay>:nth-child(3) {
+
+    animation-delay: 10s;
+}
+
+.container-sign-in-overlay>:nth-child(4) {
+
     animation-delay: 5s;
 }
 

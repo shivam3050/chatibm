@@ -3,12 +3,12 @@ import { Message } from "../db/message.model.js"
 import { WebSocketServer } from 'ws';
 import { parse } from "url"
 
-export const createNewOneChat = async (senderId, receiverId, message, createdAt) => {
+export const createNewOneChat = async (senderId, receiverId, content, createdAt) => {
     try {
         const message = await Message.create({
             senderId: senderId,
             receiverId: receiverId,
-            content: message,
+            content: content,
             createdAt: createdAt
         })
         return message
@@ -342,7 +342,9 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                             msg: [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, gender: client.gender, id: client.id })).filter((item, _, __) => (item.id !== sender.id))
                             // msg: await searchAllUsers()
                         })
+                        
                     )
+
                     return
                 }
                 else {
