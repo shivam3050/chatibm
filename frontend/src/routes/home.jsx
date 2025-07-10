@@ -163,7 +163,7 @@ export function Home(props) {
 
                     userRef.current.availableUsers = data.msg || []
 
-                    alert("recievd res after refrseh query")
+                 
 
                     if (userRef.current.availableUsers) {
 
@@ -501,7 +501,6 @@ export function Home(props) {
                 )
             )
 
-            alert("sent qyery refresh")
 
 
             return
