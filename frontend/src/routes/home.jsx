@@ -1,8 +1,9 @@
 
+import { countries } from "../controllers/allCountries.js";
 import { useState } from "react";
 
 import Loading from "../utilitiesCompo/loading";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 
 
@@ -10,7 +11,7 @@ export function Home(props) {
     // states to update only ui and none
     const [selectedReceiver, setSelectedReceiver] = useState({ username: "", gender: "", age: null, id: "" })
 
-    const [headerTitle, setHeaderTitle] = useState("ChatIBM")
+    const [headerTitle, setHeaderTitle] = useState("ChatIBG")
 
     const [toggleSelect, setToggleSelect] = useState(false)
 
@@ -36,7 +37,7 @@ export function Home(props) {
 
 
 
-    const initializeConnection = async (
+    const initializeConnection = (
         e,
         socketContainer,
         user,
@@ -56,6 +57,7 @@ export function Home(props) {
         const username = formData.get("username")
         const age = formData.get("age")
         const gender = formData.get("gender")
+        const country = formData.get("country")
         const label = e.currentTarget.lastElementChild;
 
         //prechecking about correctness of data
@@ -78,7 +80,7 @@ export function Home(props) {
 
 
         try {
-            socketContainer.current = new WebSocket(`${import.meta.env.VITE_BACKEND_WS_URL}/?username=${username}&age=${age}&gender=${gender}`)
+            socketContainer.current = new WebSocket(`${import.meta.env.VITE_BACKEND_WS_URL}/?username=${username}&age=${age}&gender=${gender}&country=${encodeURIComponent(country)}`)
         } catch (error) {
 
             setSignInLoadingFlag(false)
@@ -104,7 +106,7 @@ export function Home(props) {
             return
         }
 
-        socketContainer.current.onmessage = (message) => {
+        socketContainer.current.onmessage = async (message) => {
             setSignInLoadingFlag(false)
             setSignInErrorLog("")
             let data = null
@@ -143,12 +145,18 @@ export function Home(props) {
 
                     gender: data.gender,
 
+                    country: data.country,
+
                     id: data.id,
+
+                    availableConnectedUsersUnreadLength: 0,
 
                     availableUsers: data.availableUsers || [],
 
                     availableConnectedUsers: []
                 }
+
+
 
 
 
@@ -163,7 +171,7 @@ export function Home(props) {
 
                     userRef.current.availableUsers = data.msg || []
 
-                 
+
 
                     if (userRef.current.availableUsers) {
 
@@ -171,13 +179,14 @@ export function Home(props) {
 
                         navigate("/users")
 
-                        setHeaderTitle("ChatIBM")
+                        setHeaderTitle("ChatIBG")
 
                     }
 
                     return
                 }
                 if (data.query === "chat-list-demand") {
+                
 
                     if (data.sender.id !== userRef.current.id) {
                         //this is not for me  which i have queried when click on a user
@@ -218,6 +227,9 @@ export function Home(props) {
 
                     // here is the structure
 
+                    props.setChatsOverlay(false)
+
+
                     userRef.current.focusedContact = data.receiver
 
                     setSelectedReceiver(userRef.current.focusedContact)
@@ -227,6 +239,8 @@ export function Home(props) {
                     chatRef.current.sender = data.sender;
 
                     chatRef.current.receiver = data.receiver;
+
+
 
 
                     if (data.msg.length) {
@@ -254,6 +268,8 @@ export function Home(props) {
             }
 
             if (data.type === "message") {
+
+            
 
 
                 if (data.sender.id === userRef.current.id) {
@@ -283,12 +299,15 @@ export function Home(props) {
                     if (!(userRef.current.availableConnectedUsers.some((obj) => (obj.id === data.receiver.id)))) {
 
                         // this is means not present
+
+
                         userRef.current.availableConnectedUsers.push(
                             {
 
                                 username: data.receiver.username,
                                 age: data.receiver.age,
                                 gender: data.receiver.gender,
+                                country: data.receiver.country,
                                 id: data.receiver.id,
                                 unread: false
 
@@ -402,6 +421,11 @@ export function Home(props) {
                             userRef.current.availableConnectedUsers[i].unread = true
                             searchFound = true
                             props.setRefreshUsersFlag((prev) => (prev + 1))
+
+                            userRef.current.availableConnectedUsersUnreadLength += 1
+
+                            props.setRecentUnreadContactCount(userRef.current.availableConnectedUsersUnreadLength)
+                         
                             break
                         }
 
@@ -411,6 +435,8 @@ export function Home(props) {
 
                         // this is means this user is not present in available contacts
 
+
+
                         userRef.current.availableConnectedUsers.push(
 
                             {
@@ -418,13 +444,22 @@ export function Home(props) {
                                 username: data.sender.username,
                                 age: data.sender.age,
                                 gender: data.sender.gender,
+                                country: data.sender.country,
                                 id: data.sender.id,
                                 unread: true
 
                             }
                         )
 
+                        userRef.current.availableConnectedUsersUnreadLength += 1
+
+                        props.setRecentUnreadContactCount(userRef.current.availableConnectedUsersUnreadLength)
+
+
                         props.setRefreshUsersFlag((prev) => (prev + 1))
+             
+
+
 
                     }
 
@@ -436,13 +471,18 @@ export function Home(props) {
 
 
 
-                    if (!inboxIconRef.current.classList.contains("svg-container-inbox-icon")) {
 
 
-                        inboxIconRef.current.classList.add("svg-container-inbox-icon")
 
 
-                    }
+
+                    // if (!inboxIconRef.current.classList.contains("svg-container-inbox-icon")) {
+
+
+                    //     inboxIconRef.current.classList.add("svg-container-inbox-icon")
+
+
+                    // }
                     return
                 }
 
@@ -552,17 +592,17 @@ export function Home(props) {
     }
 
 
-// let lastScrollY = window.scrollY;
+    // let lastScrollY = window.scrollY;
 
-// window.addEventListener("scroll", () => {
-//   const currentScrollY = window.scrollY;
+    // window.addEventListener("scroll", () => {
+    //   const currentScrollY = window.scrollY;
 
-//   if (currentScrollY < lastScrollY) {
-//     console.log("scrolled up");
-//   }
+    //   if (currentScrollY < lastScrollY) {
+    //     console.log("scrolled up");
+    //   }
 
-//   lastScrollY = currentScrollY;
-// });
+    //   lastScrollY = currentScrollY;
+    // });
 
 
     return (
@@ -574,7 +614,7 @@ export function Home(props) {
 
                 >
                     <div
-                        style={{ visibility: (selectedReceiver.username || headerTitle !== "ChatIBM") ? "visible" : "hidden", backgroundColor: "transparent" }}
+                        style={{ visibility: (selectedReceiver.username || headerTitle !== "ChatIBG") ? "visible" : "hidden", backgroundColor: "transparent" }}
                         onClick={
                             () => {
 
@@ -588,13 +628,15 @@ export function Home(props) {
                                         id: "",
                                         age: null,
                                         gender: "",
+                                        country: ""
                                     }
                                     props.userRef.current.focusedContact = {
 
                                         username: "",
                                         id: "",
                                         age: null,
-                                        gender: ""
+                                        gender: "",
+                                        country: ""
 
                                     }
                                 }
@@ -602,7 +644,7 @@ export function Home(props) {
                                 navigate("/users")
 
 
-                                setHeaderTitle("ChatIBM")
+                                setHeaderTitle("ChatIBG")
                             }
                         }
                         className="button">
@@ -624,14 +666,16 @@ export function Home(props) {
                     >
                         <div className="profile-photo-in-header" style={{
                             display: selectedReceiver.username ? "flex" : "none",
-                            backgroundImage: `url(${selectedReceiver.gender === "male" ? "male.jpg" : "female.webp"})`
+                            backgroundImage: `url(${selectedReceiver.gender === "male" ? "male.png" : "female.png"})`
                         }}>
 
                         </div>
                         <i className={selectedReceiver.username ? "selected-username-holder" : ""}>{selectedReceiver.username || headerTitle}</i></div>
 
 
-                    <div className="inbox"
+                    <div
+                        className={props.recentUnreadContactCount ? "svg-container-inbox-icon" : "inbox"}
+                        data-recent-contact-unread-count={props.recentUnreadContactCount}
                         ref={inboxIconRef}
 
                         onClick={
@@ -648,7 +692,7 @@ export function Home(props) {
                                 props.setRefreshGlobalUsersFlag((prev) => (prev + 1))
                                 setHeaderTitle("Recent Connections")
 
-                                e.currentTarget.classList.remove("svg-container-inbox-icon")
+
 
                             }
                         }
@@ -763,9 +807,9 @@ export function Home(props) {
 
                 <section className="signin-box">
                     <label >Register & Go!</label>
-                    <form autoComplete="off" action="" className="inputs" onSubmit={async (e) => {
+                    <form autoComplete="off" action="" className="inputs" onSubmit={(e) => {
 
-                        await initializeConnection(
+                        initializeConnection(
                             e,
                             props.socketContainer,
                             props.user,
@@ -809,6 +853,26 @@ export function Home(props) {
 
                             </fieldset>
 
+                        </section>
+
+                        <section className="selectbar-container" defaultValue="">
+                            <fieldset >
+
+                                <legend>Country</legend>
+                                <select className="country-selector-signin" name="country" required>
+                                    <option style={{visibility:"hidden"}} value="">{"▼"}</option>
+
+                                    {countries.map((country, index) => (
+                                        <option
+                                         key={index} value={country.countryName}>
+                                            {country.countryName}
+                                        </option>
+                                    ))}
+
+                                </select>
+
+
+                            </fieldset>
                         </section>
 
 

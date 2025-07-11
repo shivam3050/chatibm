@@ -7,8 +7,12 @@ function AllUsers(props) {
         <div>
             <UserSection
                 userRef={props.userRef}
+                
+                setRecentUnreadContactCount={props.setRecentUnreadContactCount}
                 socketContainer={props.socketContainer}
                 refreshGlobalUsersFlag={props.refreshGlobalUsersFlag}
+
+                CountryMap={props.CountryMap}
 
             />
 

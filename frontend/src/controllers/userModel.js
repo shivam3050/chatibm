@@ -4,12 +4,15 @@ export const userRef = {
     id: "",
     age: null,
     gender: "",
+    country: "",
+    availableConnectedUsersUnreadLength :0,
     availableConnectedUsers: [
         {
             username: "",
             id: "",
             age: null,
             gender: "",
+            country: "",
             unread: false
         }
     ],
@@ -18,7 +21,9 @@ export const userRef = {
             username: "",
             id: "",
             age: null,
-            gender: ""
+            gender: "",
+            country: "",
+            unread: false
         }
     ],
     focusedContact: {
@@ -26,7 +31,9 @@ export const userRef = {
         username: "",
         id: "",
         age: null,
-        gender: ""
+        gender: "",
+        country: "",
+        unread: false
 
     }
 
@@ -39,12 +46,14 @@ export const chatsRef = {
         id: "",
         age: null,
         gender: "",
+        country: "",
     },
     receiver: {
         username: "",
         id: "",
         age: null,
         gender: "",
+        country: "",
     },
     availableChats: [
         {

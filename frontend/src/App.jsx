@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { userRef as userSchema,chatsRef as chatSchema } from '../src/controllers/userModel.js';
 import { useMemo } from 'react';
+import { countries } from './controllers/allCountries.js';
 
 
 
@@ -28,6 +29,10 @@ function App() {
 
   const chatRef = useRef(chatSchema)
 
+  const CountryMap = new Map(
+    countries.map((country)=>([country.countryName,country]))
+  )
+
   const chatsDivRef = useRef(null)
 
 
@@ -38,6 +43,8 @@ function App() {
   const [refreshChatsFlag, setRefreshChatsFlag] = useState(0)
 
   const [chatsOverlay, setChatsOverlay ] = useState("")
+
+  const [recentUnreadContactCount, setRecentUnreadContactCount] = useState(0)
 
 
 
@@ -96,6 +103,10 @@ function App() {
 
           userRef={userRef}
 
+          setRecentUnreadContactCount={setRecentUnreadContactCount}
+
+          recentUnreadContactCount={recentUnreadContactCount}
+
           chatRef={chatRef}
 
           chatsDivRef={chatsDivRef}
@@ -118,9 +129,13 @@ function App() {
 
             userRef={userRef}
 
+            setRecentUnreadContactCount={setRecentUnreadContactCount}
+
             socketContainer={socketContainer}
 
             refreshGlobalUsersFlag={refreshGlobalUsersFlag}
+
+            CountryMap={CountryMap}
 
             
 
@@ -135,9 +150,13 @@ function App() {
 
                   userRef={userRef}
 
+                  setRecentUnreadContactCount={setRecentUnreadContactCount}
+
                   socketContainer={socketContainer}
 
                   refreshGlobalUsersFlag={refreshGlobalUsersFlag}
+
+                  CountryMap={CountryMap}
                 />
              
             }
@@ -174,10 +193,14 @@ function App() {
                   <AllContactsAndNotifications
   
                     userRef={userRef}
+
+                    setRecentUnreadContactCount={setRecentUnreadContactCount}
   
                     socketContainer={socketContainer}
 
                     refreshUsersFlag={refreshUsersFlag}
+
+                    CountryMap={CountryMap}
   
                     
                   />

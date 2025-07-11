@@ -4,6 +4,9 @@ import { useEffect, useState } from "react"
 
 export const MyRecentContactSection = (props) => {
 
+ 
+
+
 
 
 
@@ -35,10 +38,22 @@ export const MyRecentContactSection = (props) => {
     return <div className="users-container">
         {
             updateAvailableConnectedUsersInUI.map((user, index) => {
+              
                 return (
                     <div
                         onClick={
-                            async () => {
+                            () => {
+
+
+                                if (props.userRef.current.availableConnectedUsers[index].unread) {
+
+                                    props.userRef.current.availableConnectedUsersUnreadLength -= 1
+
+                                    props.setRecentUnreadContactCount(props.userRef.current.availableConnectedUsersUnreadLength)
+
+
+                                }
+
 
                                 if (!props.socketContainer?.current || props.socketContainer.current.readyState !== 1) {
                                     return console.error("socket is not ready")
@@ -49,8 +64,8 @@ export const MyRecentContactSection = (props) => {
                                 props.socketContainer.current.send(
                                     JSON.stringify(
                                         {
-                                            sender: { username: props.userRef.current.username, id: props.userRef.current.id },
-                                            receiver: { username: user.username, id: user.id },
+                                            sender: { username: props.userRef.current.username, id: props.userRef.current.id, country: props.userRef.current.country },
+                                            receiver: { username: user.username, id: user.id, country: user.country, gender: user.gender },
                                             type: "query-message",
                                             queryType: "chat-list-demand"
                                         }
@@ -61,7 +76,7 @@ export const MyRecentContactSection = (props) => {
                         }
                         key={index}>
                         <div style={{
-                            backgroundImage: `url(${user.gender === "male" ? "male.jpg" : "female.webp"})`
+                            backgroundImage: `url(${user.gender === "male" ? "male.png" : "female.png"})`
 
                         }}>
 
@@ -71,8 +86,14 @@ export const MyRecentContactSection = (props) => {
                                 {user.username}
                             </div>
                             <div>
-                                {`Age ${user.age} yrs`}
+                                <section>{`Age ${user.age} yrs`}</section> <section>{user.country}</section>
+
+
                             </div>
+                        </div>
+                        <div>
+                            <section style={{ backgroundImage: `url(${props.CountryMap.get(user.country).png})` }}></section>
+
                         </div>
 
 

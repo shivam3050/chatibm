@@ -5,7 +5,37 @@
     position: relative;
     overflow-y: hidden;
 
+
+
+
+
+
+    ::-webkit-scrollbar {
+        width: 2px;
+    }
+
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+    }
+
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
 }
+
+
+
+
+
 
 
 
@@ -112,7 +142,7 @@
 
     :root {
         --app-height: 100dvh;
-        
+
     }
 
     :root::after {
@@ -129,7 +159,8 @@
         font-family: cursive;
 
     }
-    #root{
+
+    #root {
         --offset-for-keyboard: 110px
     }
 }
@@ -159,7 +190,7 @@ body {
 }
 
 
-div{
+div {
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -347,6 +378,7 @@ input[type="password"]:focus {
     border-bottom: var(--border-size) solid #000000;
     box-shadow: 0px 0px 1x 1px var(--pure-black);
     padding-block: var(--med-padding);
+    padding-inline: var(--max-padding);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -364,7 +396,7 @@ input[type="password"]:focus {
     /* this is the all elements in header */
     height: 100%;
     /* width: 10%; */
-    min-width: 50px;
+    min-width: 35px;
 
     padding: var(--min-padding);
     outline: none;
@@ -401,7 +433,7 @@ input[type="password"]:focus {
 .dashboard> :nth-child(1)> :nth-child(2)> :nth-child(1) {
     /* this is profile photo in header username */
     /* border: var(--border-size) inset rgb(50, 46, 46); */
-    box-shadow: inset 0px 1px 2px 3px var(--extra-light-grey);
+    box-shadow: inset 0px 0px 1px 1px var(--extra-light-grey);
     height: calc(0.8*var(--nav-height) - var(--med-padding));
     width: calc(0.8*var(--nav-height) - var(--med-padding));
     aspect-ratio: 1/1;
@@ -416,36 +448,40 @@ input[type="password"]:focus {
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+   
     padding-inline: var(--max-padding);
 
 }
 
-.selected-username-holder-noborder {
-    overflow-x: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding-inline: var(--max-padding);
-}
+
 
 .dashboard> :nth-child(1)> :nth-child(3) {
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
+    width: var(--nav-height);
+    
 }
 
 
 .svg-container-inbox-icon::after {
-    content: "";
-    width: 8px;
-    height: 8px;
-    border: 1px solid rgb(125, 0, 0) ;
+    content: attr(data-recent-contact-unread-count);
+    width: 14px;
+    height: 14px;
+    font-size: 8px;
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgb(125, 0, 0);
     aspect-ratio: 1/1;
     background-color: red;
     border-radius: 50%;
     position: absolute;
-    top:25%;
-    right: 22%;
+    top: 15%;
+    right: 0%;
 
 
 }
@@ -471,7 +507,7 @@ input[type="password"]:focus {
 .dashboard> :nth-child(1)> :nth-child(4) {
     /* this is select like tag which stores aside */
     background-color: transparent;
-    padding: var(--max-padding);
+    /* padding: var(--max-padding); */
     position: relative;
 
     width: var(--nav-height);
@@ -554,6 +590,7 @@ input[type="password"]:focus {
 
 
 .users-container {
+    /* users field container */
     background-color: var(--light-black);
     height: 100%;
     position: relative;
@@ -561,8 +598,8 @@ input[type="password"]:focus {
 
 }
 
-.users-container::before {
-    content: attr(data-online-users-count) " -  Online";
+.my-contact-field-container::before {
+    content: "● " attr(data-online-users-count) "  Online";
     height: 12px;
     width: 12px;
     position: relative;
@@ -574,18 +611,6 @@ input[type="password"]:focus {
 
 }
 
-.users-container::after {
-    content: "";
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background-color: var(--professional-blue);
-    border-radius: 50%;
-    position: absolute;
-    left: 12px;
-    top: 6px;
-
-}
 
 .users-container>* {
     /* this is the user field */
@@ -624,11 +649,68 @@ input[type="password"]:focus {
 .users-container>*> :nth-child(2)> :nth-child(1) {
     /* this is username field */
     font-size: var(--med-font-size);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .users-container>*> :nth-child(2)> :nth-child(2) {
-    /* this is users age */
+    /* this is flag and age conatiner */
     font-size: var(--mini-font-size);
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    column-gap: var(--med-margin);
+
+    /* box-sizing: border-box; */
+    position: relative;
+
+}
+
+.users-container>*> :nth-child(2)> :nth-child(2)> :nth-child(2) {
+    /* this is country name */
+    overflow: hidden;
+    font-size: var(--mini-font-size);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 50px;
+
+
+}
+
+.users-container>*> :nth-child(2)> :nth-child(2)> :nth-child(1) {
+    /* this is users age */
+    /* color: red; */
+    font-weight: bold;
+    font-size: var(--min-font-size);
+    text-shadow: 1px 0px 2px rgb(0, 0, 0);
+
+    font-style: oblique;
+    font-style: italic;
+
+}
+.users-container>*> :nth-child(3){
+    /* this is country flag container */
+    flex: 1;
+    display: flex;
+    justify-content: end;
+}
+
+.users-container>*> :nth-child(3)>* {
+
+    /* this is country flag */
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+    width: 24px;
+    height: 16px;
+    box-shadow: 0px 0px 1px 1px black;
+    border-radius: var(--med-border-radius);
+    background-color: transparent;
+
+
 }
 
 
@@ -644,7 +726,7 @@ input[type="password"]:focus {
 }
 
 .user-vs-chat-container> :nth-child(1) {
-    
+
     /* chatcssection */
     height: calc(100% - var(--offset-for-keyboard));
     display: flex;
@@ -723,8 +805,8 @@ input[type="password"]:focus {
     font-family: '"Segoe UI", "Helvetica Neue", Helvetica, "Lucida Grande", Arial, Ubuntu, Cantarell, "Fira Sans", sans-serif';
 
     word-break: break-all;
-    white-space: pre-wrap; 
-    
+    white-space: pre-wrap;
+
     word-spacing: calc(0.1*var(--min-line-height));
     letter-spacing: calc(0.1*var(--min-line-height));
     line-height: calc(1.2*var(--max-line-height));
@@ -774,7 +856,7 @@ input[type="password"]:focus {
     height: 100%;
     border: calc(5*var(--border-size)) solid var(--dark-grey);
     border-radius: calc(2*var(--large-border-radius));
-    box-shadow: 0px 0px 0px 1px black;
+    box-shadow: 0px 0px 0px 1px #1f1f1f;
     background-color: var(--dark-grey);
 
 
@@ -804,8 +886,7 @@ input[type="password"]:focus {
 
 }
 
-.users-container>*> :nth-child(3),
-.unread-highlight-container {
+.users-container>*> :last-child, .unread-highlight-container {
     /* this is highlighted unread container */
 
     position: relative;
@@ -813,7 +894,7 @@ input[type="password"]:focus {
     justify-content: end;
     align-items: center;
     padding-inline: var(--max-padding);
-    flex: 1;
+    width: 10px;
 }
 
 .container-sign-in {
@@ -848,19 +929,21 @@ input[type="password"]:focus {
     background: var(--darkest-black-user);
     overflow: hidden;
     display: flex;
+    column-gap: 30px;
+    overflow-x: hidden;
     /* flex-wrap: wrap; */
 }
 
-/* @keyframes falling {
+@keyframes falling {
     0% {
-        transform: translateY(calc(-1*var(--app-height)));
+        transform: translateY(-200px);
     }
 
     100% {
-        transform: translateY(calc(2*var(--app-height)));
+        transform: translateY(calc(100vh + 200px));
     }
 
-} */
+}
 
 .container-sign-in-overlay>* {
 
@@ -868,15 +951,16 @@ input[type="password"]:focus {
     animation: falling 10s ease-out infinite;
     margin: var(--max-margin);
     position: relative;
-    width: calc(100vw / 4);
-    height: calc(100vw / 4);
+    width: 150px;
+    height: 150px;
     aspect-ratio: 1/1;
     border-radius: 50%;
     background: transparent;
     filter: blur(8px);
+    top: -200px;
+    left: -10%;
     box-shadow: 5px 5px 10px 0px black;
-    /* top: calc(-200px); */
-    /* bottom: calc(-200px); */
+
 
 }
 
@@ -887,18 +971,20 @@ input[type="password"]:focus {
 
 .container-sign-in-overlay>:nth-child(2) {
 
-    animation-delay: 1s;
+    animation-delay: 5s;
 }
 
 .container-sign-in-overlay>:nth-child(3) {
 
-    animation-delay: 10s;
+    animation-delay: 2s;
 }
 
 .container-sign-in-overlay>:nth-child(4) {
 
-    animation-delay: 5s;
+    animation-delay: 7s;
 }
+
+
 
 
 
@@ -962,6 +1048,55 @@ input[type="password"]:focus {
     font-weight: 900;
     font-size: 1.2em;
 }
+
+
+.country-selector-signin {
+    appearance: none;
+    text-align: center;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    width: max-content;
+    height: 25px;
+    padding-inline: var(--med-padding);
+    max-width: 130px;
+
+    margin: 0;
+}
+
+
+
+
+
+.country-selector-signin>* {
+    color: black;
+    appearance: none;
+}
+
+.selectbar-container>* {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-inline: var(--max-padding);
+    padding-block: var(--med-padding);
+    align-items: center;
+    padding: 0;
+    /* background-color: red; */
+    width: max-content;
+    height: max-content;
+
+}
+
+
+
+
 
 .signin-box> :nth-child(2)> :last-child {
     color: red;

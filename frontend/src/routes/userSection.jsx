@@ -33,26 +33,37 @@ export const UserSection = (props) => {
 
 
 
-    return <div className="users-container" data-online-users-count={updateAvailableUsersInUI.length}>
+    return <div className="users-container my-contact-field-container" data-online-users-count={updateAvailableUsersInUI.length}>
         {
 
             updateAvailableUsersInUI.map((user, index) => {
                 return (
                     <div
                         onClick={
-                            async () => {
+                             () => {
 
-                                
+                                //  I WILL FIX THIS LATER
+
+                                // if (props.userRef.current.availableUsers[index].unread) {
+
+                                //     props.userRef.current.availableConnectedUsersUnreadLength -= 1
+
+                                //     props.setRecentUnreadContactCount(props.userRef.current.availableConnectedUsersUnreadLength)
+
+
+                                // }
+
+
+
 
                                 if (!props.socketContainer?.current || props.socketContainer.current.readyState !== 1) {
                                     return console.error("socket is not ready")
                                 }
-
                                 props.socketContainer.current.send(
                                     JSON.stringify(
                                         {
-                                            sender: { username: props.userRef.current.username, id: props.userRef.current.id, age: props.userRef.current.age, gender: props.userRef.current.gender },
-                                            receiver: { username: user.username, id: user.id, age: user.age, gender: user.gender },
+                                            sender: { username: props.userRef.current.username, id: props.userRef.current.id, age: props.userRef.current.age, gender: props.userRef.current.gender, country: props.userRef.current.country },
+                                            receiver: { username: user.username, id: user.id, age: user.age, gender: user.gender, country: user.country },
                                             type: "query-message",
                                             queryType: "chat-list-demand"
                                         }
@@ -63,19 +74,24 @@ export const UserSection = (props) => {
                         }
                         key={index}>
                         <div style={{
-                            backgroundImage: `url(${user.gender === "male" ? "male.jpg" : "female.webp"})`
+                            backgroundImage: `url(${user.gender === "male" ? "male.png" : "female.png"})`
 
                         }}>
 
                         </div>
-                        <div
-                        >
+                        <div>
                             <div>
                                 {user.username}
                             </div>
                             <div>
-                                {`Age ${user.age} yrs`}
+                                <section>{`Age ${user.age} yrs`}</section> <section>{user.country}</section>
+                                
+                                
                             </div>
+                        </div>
+                        <div>
+                            <section style={{backgroundImage:`url(${props.CountryMap.get(user.country).png})`}}></section>
+
                         </div>
                     </div>
                 )

@@ -110,7 +110,7 @@ function ChatsRoute(props) {
                                 message: message,
                                 createdAt: timestamp,
                                 receiver: props.userRef.current.focusedContact,
-                                sender: { username: props.userRef.current.username, id: props.userRef.current.id, age: props.userRef.current.age, gender: props.userRef.current.gender }
+                                sender: { username: props.userRef.current.username, id: props.userRef.current.id, age: props.userRef.current.age, gender: props.userRef.current.gender, country: props.userRef.current.country }
                             }
                         )
                     )

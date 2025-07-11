@@ -70,12 +70,13 @@ class Client {
     static counter = 0;
     static lastTimeStamp = 0;
 
-    constructor(username, age, gender, socket) {
+    constructor(username, age, gender, country, socket) {
         this.username = username,
 
             this.socket = socket,
             this.age = age,
             this.gender = gender,
+            this.country = country,
             this.id = this.generateId()
 
     }
@@ -148,6 +149,10 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
 
         const gender = query.gender
 
+        const country = query.country
+
+        
+
         const age = parseInt(query.age)
 
         if (age < 18) {
@@ -160,8 +165,8 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             socket.close(1008, "a user already exists")
             return
         }
-        const availableUsers = [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, gender: client.gender, id: client.id }))
-        const client = new Client(username, age, gender, socket)
+        const availableUsers = [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, gender: client.gender, country: client.country, id: client.id }))
+        const client = new Client(username, age, gender,country, socket)
 
         activeClients.set(username, client);
 
@@ -173,6 +178,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                 type: "register",
                 age: client.age,
                 gender: client.gender,
+                country: client.country,
                 id: client.id,
 
                 availableUsers: availableUsers
@@ -297,6 +303,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             else if (type === "query-message") {
 
                 if (queryType === "chat-list-demand") {
+               
                     if (!sender || !receiver) {
                         return console.error("sender or recievr not provided")
                     }
@@ -312,7 +319,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                                 receiver: receiver,
                                 type: type,
                                 query: queryType,
-                                msg: `${sender.username} is offline now`
+                                msg: `${receiver.username} is offline now`
                             })
                         )
 
@@ -339,7 +346,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                             sender: sender,
                             type: type,
                             query: queryType,
-                            msg: [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, gender: client.gender, id: client.id })).filter((item, _, __) => (item.id !== sender.id))
+                            msg: [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, gender: client.gender, country: client.country, id: client.id })).filter((item, _, __) => (item.id !== sender.id))
                             // msg: await searchAllUsers()
                         })
                         
