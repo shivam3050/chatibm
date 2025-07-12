@@ -12,6 +12,7 @@ connectDB().then((dbname) => {
     const allowedOrigin = [process.env.WHITELISTED_FRONTEND_URL];
 
     const server = http.createServer((req, res) => {
+        
         console.log(req.headers.host)
         res.writeHead(200, { 'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin':"*",

@@ -885,7 +885,7 @@ export function Home(props) {
                                 }
                             }>
 
-                            {signInLoadingFlag ? (<Loading size="16px" />) : (signInErrorLog)}
+                            {signInLoadingFlag ? (<Loading size="20px" />) : (signInErrorLog)}
 
 
                         </label>

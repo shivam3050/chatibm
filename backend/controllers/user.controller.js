@@ -108,7 +108,8 @@ class Client {
 
 const activeClients = new Map()
 
-export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
+export const newConnectionHandler = async (dbname, httpServer, allowedOrigin) => {
+
     const server = new WebSocketServer(
         {
             server: httpServer,
@@ -139,9 +140,12 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
     if (server) {
         console.log(`ws is running`)
     }
-    server.on("connection", async (socket, request) => {
+    server.on("connection", (socket, request) => {
         console.log("connected")
-        await new Promise((resolve)=>{setTimeout(()=>{resolve()},1000)})
+
+        // await new Promise((resolve) => {
+        //     setTimeout(() => { resolve() }, 20000)
+        // })
 
 
         const { query } = parse(request.url, true)
@@ -151,7 +155,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
 
         const country = query.country
 
-        
+
 
         const age = parseInt(query.age)
 
@@ -166,11 +170,11 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             return
         }
         const availableUsers = [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, gender: client.gender, country: client.country, id: client.id }))
-        const client = new Client(username, age, gender,country, socket)
+        const client = new Client(username, age, gender, country, socket)
 
         activeClients.set(username, client);
 
-        
+
 
         socket.send(JSON.stringify(
             {
@@ -225,7 +229,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
 
                 const userObject = activeClients.get(receiver.username)
 
-                if (!userObject || userObject.id!==receiver.id) {
+                if (!userObject || userObject.id !== receiver.id) {
 
                     return socket.send(JSON.stringify(
                         {
@@ -303,7 +307,7 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
             else if (type === "query-message") {
 
                 if (queryType === "chat-list-demand") {
-               
+
                     if (!sender || !receiver) {
                         return console.error("sender or recievr not provided")
                     }
@@ -349,13 +353,13 @@ export const newConnectionHandler = (dbname, httpServer, allowedOrigin) => {
                             msg: [...activeClients.entries()].map(([username, client], _, __) => ({ username: client.username, age: client.age, gender: client.gender, country: client.country, id: client.id })).filter((item, _, __) => (item.id !== sender.id))
                             // msg: await searchAllUsers()
                         })
-                        
+
                     )
 
                     return
                 }
                 else {
-                  
+
                     console.error("invalid query under the valid type")
                     return
                 }
